@@ -11,6 +11,8 @@ enum GroundSide
 
 public class LevelGenerator : MonoBehaviour
 {
+	private delegate void ChangeSpriteFunc(Block block);
+
 	public static System.Action<BlockBase> OnPassingBackEdge;
 
 	[SerializeField] private Transform OutOfScreenPosition;
@@ -52,11 +54,8 @@ public class LevelGenerator : MonoBehaviour
 	private float ChanceToSpawnDecoration = 0.3f;
 	private float ChanceToSpawnHugeDecoration = 0.4f;
 	private float ChanceToSpawnEnemy = 0.3f;
-	
 
-	private delegate void voidFunc(Block block);
-
-	private voidFunc[] SetBlockSprite = new voidFunc[3];
+	private ChangeSpriteFunc[] SetBlockSprite = new ChangeSpriteFunc[3];
 
 	private int DistanceBetweenHugeDecoration = 2;
 
@@ -79,7 +78,9 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private LayerMask otherLayer;
 	public void Start()
 	{
-		
+		OnPassingBackEdge = null;
+
+
 		SetBlockSprite[0] = SetLeftSprite;
 		SetBlockSprite[1] = SetTopSprite;
 		SetBlockSprite[2] = SetRightSprite;
@@ -276,7 +277,8 @@ public class LevelGenerator : MonoBehaviour
 		Block newBlock = (Block)SpawnObjectInTheWorld(blocksPool);
 		newBlock.Transform.position = newBlock.Transform.position + Vector3.right;
 		SetBlockSprite[(int)side](newBlock);
-		newBlock.gameObject.layer = groundLayer;
+		int layer = (Utility.LayerMaskToLayer(groundLayer));
+		newBlock.gameObject.layer = layer;
 		lastBlock = newBlock;
 	}
 

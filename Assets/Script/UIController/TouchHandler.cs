@@ -32,16 +32,12 @@ public class TouchHandler : MonoBehaviour
                     isTouchMoved = true;
                     moveVector = (touch.position - startPosition).normalized;
                     OnTouchMove?.Invoke(moveVector);
-
-                    print(moveVector);
-
                     ResetMoveVector();
                     ResetStartPosition();
                 }
             }
             else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
             {
-                print("ended");
                 isTouchMoved = false;
             }
 		}
