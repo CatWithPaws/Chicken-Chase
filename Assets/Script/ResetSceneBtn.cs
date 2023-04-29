@@ -6,6 +6,6 @@ public class ResetSceneBtn : MonoBehaviour
 {
     public void RestartLevel()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
