@@ -5,26 +5,30 @@ using UnityEngine;
 
 public class WorldMoving : MonoBehaviour
 {
-	public float SpeedMultiplier
+	[SerializeField] private PlayerController player;
+
+	public float Speed
 	{
 		get
 		{
-			return speedMultiplier;
+			return speed;
 		}
 	}
-	[SerializeField]
-	private float speedMultiplier = 1.5f;
-	private float growingSpeedMultiplierPerMinute = 0.01f;
+
+	[SerializeField] private float speed = 1.5f;
+
+	private float growingSpeedMultiplierPerSecond = 0.01f;
+
 	private void FixedUpdate()
 	{
 		var children = transform.GetComponentsInChildren<Transform>();
 		foreach(var obj in children)
 		{
-			obj.transform.Translate(Vector3.left*Time.fixedDeltaTime * speedMultiplier);
+			obj.transform.Translate(Vector3.left*Time.fixedDeltaTime * speed);
 		}
-		if (speedMultiplier < 20)
+		if (speed < 20)
 		{
-			speedMultiplier += Time.fixedDeltaTime * growingSpeedMultiplierPerMinute;
+			speed += Time.fixedDeltaTime * growingSpeedMultiplierPerSecond;
 		}
 	}
 }

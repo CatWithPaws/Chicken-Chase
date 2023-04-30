@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private bool isAlive;
+  
+
+    public bool IsAlive
+    {
+        get 
+        { 
+            return isAlive; 
+        }
+        private set
+        {
+            isAlive = value;
+        }
+    }
     [SerializeField] private Collider2D defaultCollider;
     [SerializeField] private Collider2D slideCollider;
 
@@ -45,6 +59,11 @@ public class PlayerController : MonoBehaviour
         CheckForSlideCoolDown();
         CheckForRunState();
 	}
+
+    public void Die()
+    {
+        IsAlive = false;
+    }
 
     private void CheckForSlideCoolDown()
     {
@@ -144,6 +163,7 @@ public class PlayerController : MonoBehaviour
     {
         slideTimeLeft = 0;
     }
+
 }
 
 public enum PlayerState
