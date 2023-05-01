@@ -13,20 +13,29 @@ public class StartGameScenerio : MonoBehaviour
 
 	[SerializeField] PlayerController player;
 
-	private void Start()
+	[SerializeField] GameObject GameUI;
+	public void StartGame()
 	{
 		StartCoroutine(StartScenario());
 	}
 
 	public IEnumerator StartScenario()
 	{
+		ChickenAnimator.Play("Run");
 		while(Vector3.Distance(ChickenTransform.position,toChickenPosition.position) > 0.5f)
 		{
-			ChickenTransform.position = Vector3.Lerp(ChickenTransform.position, toChickenPosition.position, 0.1f*Time.fixedDeltaTime);
+			ChickenTransform.position = Vector3.Lerp(ChickenTransform.position, toChickenPosition.position, 0.5f*Time.fixedDeltaTime);
 			yield return new WaitForFixedUpdate();
 		}
-
-		player.IsPlayingGame = true;
-		yield return new WaitForSeconds(1);
+		ChickenAnimator.Play("Idle");
+		yield return new WaitForSeconds(2);
+		ChickenAnimator.Play("Run");
+		player.StartPlayer();
+		GameUI.SetActive(true);
+		while (Vector3.Distance(gameCamera.transform.position, ToCameraPosition.position) > 0.5f)
+		{
+			gameCamera.transform.position = Vector3.Lerp(gameCamera.transform.position, ToCameraPosition.position, 0.5f * Time.fixedDeltaTime);
+			yield return new WaitForFixedUpdate();
+		}
 	}
 }

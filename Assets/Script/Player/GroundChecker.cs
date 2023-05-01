@@ -10,7 +10,8 @@ public class GroundChecker : MonoBehaviour
     [SerializeField] private Collider2D checkerCollider;
     [SerializeField] private LayerMask groundLayer;
 
-    private int layerToCheck => Utility.LayerMaskToLayer(groundLayer);
+    [SerializeField] private PlayerController player;
+
 
     public Collider2D[] collisions { get; private set; }
 
@@ -19,4 +20,11 @@ public class GroundChecker : MonoBehaviour
         isGrounded = checkerCollider.IsTouchingLayers(groundLayer);
     }
 
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		if(collision.gameObject.TryGetComponent(out EnemyBlock enemy))
+        {
+            player.OnEnemyTouch(enemy);
+		}
+	}
 }

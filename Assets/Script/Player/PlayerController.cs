@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public Action OnPlayerDie;
+
     private bool isAlive;
   
 
@@ -48,12 +52,11 @@ public class PlayerController : MonoBehaviour
 
     private float slideTimeLeft = 0f;
 
-    public bool IsPlayingGame = false;
+    public bool IsPlayingGame { get; private set; }
 
 	private void Awake()
 	{
         touchHandler.OnTouchMove += HandleTouch;
-        InGameEvent.instance.OnGameStarted +=  () => IsPlayingGame = true ;
 	}
 
 
@@ -72,10 +75,31 @@ public class PlayerController : MonoBehaviour
         animations.ChangeSpeed(newSpeed);
     }
 
+    public void OnEnemyTouch(EnemyBlock enemy)
+    {
+        if (IsPlayingGame)
+        {
+            if (playerState == PlayerState.FastFall)
+            {
+                LevelGenerator.OnPassingBackEdge.Invoke(enemy);
+            }
+            else
+            {
+                Die();
+            }
+        }
+    }
+
+    public void StartPlayer()
+    {
+        IsPlayingGame = true;
+        playerState = PlayerState.Run;
+    }
     public void Die()
     {
         IsAlive = false;
-        print("DIE");
+        IsPlayingGame = false;
+        OnPlayerDie?.Invoke();
     }
 
     private void CheckForSlideCoolDown()
@@ -116,15 +140,18 @@ public class PlayerController : MonoBehaviour
 
 	private void HandleTouch(Vector2 moveVector)
     {
-        if (moveVector.y > 0)
+        if (IsPlayingGame)
         {
-            ResetSlideTimer();
+            if (moveVector.y > 0)
+            {
+                ResetSlideTimer();
 
-			Jump();
-        }
-        else if(moveVector.y < 0)
-        {
-            SlideOrFastFall();
+                Jump();
+            }
+            else if (moveVector.y < 0)
+            {
+                SlideOrFastFall();
+            }
         }
     }
 
