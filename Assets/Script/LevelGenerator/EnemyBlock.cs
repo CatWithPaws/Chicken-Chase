@@ -22,7 +22,7 @@ public class EnemyBlock : BlockBase
 	{
 		if(collision.gameObject.tag == "Player")
 		{
-			
+			collision.GetComponent<PlayerController>().Die();
 		}
 	}
 }

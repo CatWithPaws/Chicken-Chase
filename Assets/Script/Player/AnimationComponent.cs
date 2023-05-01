@@ -10,4 +10,9 @@ public class AnimationComponent : MonoBehaviour
     {
 		animator.Play(Enum.GetName(typeof(PlayerState), playerState));
     }
+
+	public void ChangeSpeed(float newSpeed)
+	{
+		animator.speed = newSpeed;
+	}
 }

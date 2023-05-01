@@ -74,4 +74,4 @@ MonoBehaviour:
   - {fileID: 1752364790, guid: c907a7c97bf2eda43aac3dd629fea9f3, type: 3}
   - {fileID: -957515500, guid: c907a7c97bf2eda43aac3dd629fea9f3, type: 3}
   - {fileID: -2095635461, guid: c907a7c97bf2eda43aac3dd629fea9f3, type: 3}
-  BackgroundColor: {r: 0.14014378, g: 0.14150941, b: 0, a: 0}
+  BackgroundColor: {r: 0.14014378, g: 0.14150941, b: 0, a: 1}

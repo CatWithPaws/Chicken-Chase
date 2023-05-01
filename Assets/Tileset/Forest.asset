@@ -63,4 +63,4 @@ MonoBehaviour:
   - {fileID: 1029608094, guid: 6ba6dc5d6c9001c4ca429d6ea6a27094, type: 3}
   - {fileID: 1074785970, guid: 6ba6dc5d6c9001c4ca429d6ea6a27094, type: 3}
   - {fileID: -1305847457, guid: 6ba6dc5d6c9001c4ca429d6ea6a27094, type: 3}
-  BackgroundColor: {r: 0, g: 0.13207549, b: 0, a: 0}
+  BackgroundColor: {r: 0, g: 0.13207549, b: 0, a: 1}

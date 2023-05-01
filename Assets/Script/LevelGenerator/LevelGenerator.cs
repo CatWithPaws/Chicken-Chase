@@ -239,7 +239,7 @@ public class LevelGenerator : MonoBehaviour
 
 	private IEnumerator ChangeBG(Color endColor)
 	{
-		BackGround.color =  Color.Lerp(BackGround.color, endColor, 50 * Time.deltaTime);
+		BackGround.color =  Color.Lerp(BackGround.color, endColor, 6 * Time.deltaTime);
 		yield return new WaitForSeconds(Time.deltaTime);
 		if(BackGround.color == endColor)
 		{

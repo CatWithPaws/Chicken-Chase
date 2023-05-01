@@ -47,22 +47,35 @@ public class PlayerController : MonoBehaviour
     private float slidingDuration = 0.5f;
 
     private float slideTimeLeft = 0f;
+
+    public bool IsPlayingGame = false;
+
 	private void Awake()
 	{
         touchHandler.OnTouchMove += HandleTouch;
+        InGameEvent.instance.OnGameStarted +=  () => IsPlayingGame = true ;
 	}
 
 
-	private void FixedUpdate()
-	{
-        CheckForSlideAfterFalling();
-        CheckForSlideCoolDown();
-        CheckForRunState();
-	}
+    private void FixedUpdate()
+    {
+        if (IsPlayingGame)
+        {
+            CheckForSlideAfterFalling();
+            CheckForSlideCoolDown();
+            CheckForRunState();
+        }
+    }
+
+    public void ChangeAnimationSpeed(float newSpeed)
+    {
+        animations.ChangeSpeed(newSpeed);
+    }
 
     public void Die()
     {
         IsAlive = false;
+        print("DIE");
     }
 
     private void CheckForSlideCoolDown()
@@ -86,7 +99,6 @@ public class PlayerController : MonoBehaviour
     {
 		if (PlayerState == PlayerState.FastFall && groundChecker.isGrounded)
 		{
-            print("Slide after fall");
             Slide();
 		}
 	}
@@ -95,7 +107,7 @@ public class PlayerController : MonoBehaviour
     {
         if(PlayerState == PlayerState.Jump)
         {
-            if (groundChecker.isGrounded && physics.VerticalVelocity < 0)
+            if (groundChecker.isGrounded && physics.VerticalVelocity <= 0)
             {
                 PlayerState = PlayerState.Run;
             }
