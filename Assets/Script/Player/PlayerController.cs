@@ -74,8 +74,17 @@ public class PlayerController : MonoBehaviour
             CheckForSlideAfterFalling();
             CheckForSlideCoolDown();
             CheckForRunState();
+            CheckForResetJumps();
         }
     }
+
+	private void CheckForResetJumps()
+	{
+        if (groundChecker.lastIsGrounded != groundChecker.isGrounded && groundChecker.isGrounded == true)
+        {
+            currentAdditionalJump = maxAdditionalJumps;
+        }
+	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{

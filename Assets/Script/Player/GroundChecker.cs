@@ -6,7 +6,9 @@ using System.Linq;
 
 public class GroundChecker : MonoBehaviour
 {
-    public bool isGrounded;
+    public bool isGrounded = false;
+    public bool lastIsGrounded;
+
     [SerializeField] private Collider2D checkerCollider;
     [SerializeField] private LayerMask groundLayer;
 
@@ -17,7 +19,9 @@ public class GroundChecker : MonoBehaviour
 
     private void FixedUpdate()
     {
-        isGrounded = checkerCollider.IsTouchingLayers(groundLayer);
+		lastIsGrounded = isGrounded;
+		isGrounded = checkerCollider.IsTouchingLayers(groundLayer);
+        
     }
 
 	private void OnTriggerEnter2D(Collider2D collision)
