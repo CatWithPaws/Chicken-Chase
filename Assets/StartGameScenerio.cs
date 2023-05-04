@@ -24,7 +24,7 @@ public class StartGameScenerio : MonoBehaviour
 		ChickenAnimator.Play("Run");
 		while(Vector3.Distance(ChickenTransform.position,toChickenPosition.position) > 0.5f)
 		{
-			ChickenTransform.position = Vector3.Lerp(ChickenTransform.position, toChickenPosition.position, 0.5f*Time.fixedDeltaTime);
+			ChickenTransform.position = Vector3.Lerp(ChickenTransform.position, toChickenPosition.position, 0.9f*Time.fixedDeltaTime);
 			yield return new WaitForFixedUpdate();
 		}
 		ChickenAnimator.Play("Idle");

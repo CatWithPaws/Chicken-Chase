@@ -8,6 +8,8 @@ public class GameData : MonoBehaviour
 
     public PlayerController Player;
 
+	public int CoinsCount;
+
 	private void Awake()
 	{
 		if (Instance == null)
@@ -19,5 +21,16 @@ public class GameData : MonoBehaviour
 			Destroy(gameObject);
 		}
 
+		LoadCoins();
+	}
+
+	private void LoadCoins()
+	{
+		CoinsCount = PlayerPrefs.GetInt("Coins",0);
+	}
+
+	public void SaveCoins()
+	{
+		PlayerPrefs.SetInt("Coins", CoinsCount);
 	}
 }

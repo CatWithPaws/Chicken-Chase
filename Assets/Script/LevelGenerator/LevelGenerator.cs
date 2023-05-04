@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 enum GroundSide
@@ -53,7 +54,7 @@ public class LevelGenerator : MonoBehaviour
 	private float ChanceToSetWater = 0.05f;
 	private float ChanceToSpawnDecoration = 0.3f;
 	private float ChanceToSpawnHugeDecoration = 0.4f;
-	private float ChanceToSpawnEnemy = 0.3f;
+	private float ChanceToSpawnEnemy = 0.5f;
 
 	private ChangeSpriteFunc[] SetBlockSprite = new ChangeSpriteFunc[3];
 
@@ -62,13 +63,16 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private int CurrentDistanceFromLastHugeDecoration = 0;
 
 	public EnemyInfo[] EnemiesInfo;
-	private int BaseMaxDistanceBetweenEnemies = 3;
-	private int CurrentMaxDistanceBetweenEnemies;
-	private int IncreasedDistancePer30Sec = 1;
+	private int BaseMinDistanceBetweenEnemies = 4;
+	private int CurrentMinDistanceBetweenEnemies = 3;
 	[SerializeField] private int CurrentDistanceFromLastEnemy = 0;
+
+	[SerializeField] private int DistanceLeftToAllowSpawnEnemy = 1;
 
 	private int MinBlockOfSameBiome = 50;
 	private int CurrentBlocksOfSameBiome = 0;
+
+	private int maxBlocksWater = 2;
 
 	private int BlocksToNotPlaceAnythingInStart = 30;
 
@@ -76,10 +80,17 @@ public class LevelGenerator : MonoBehaviour
 
 	[SerializeField] private LayerMask groundLayer;
 	[SerializeField] private LayerMask otherLayer;
+
+	private float timerDurationInSeconds = 60;
+	private float timerCounting = 0;
+
+	[SerializeField] private List<Coin> coinsList;
+	private PoolObject<Coin> coinPool = new PoolObject<Coin>();
+
+	private float chanceToSpawnCoin = 0.5f;
 	public void Start()
 	{
 		OnPassingBackEdge = null;
-
 
 		SetBlockSprite[0] = SetLeftSprite;
 		SetBlockSprite[1] = SetTopSprite;
@@ -100,10 +111,15 @@ public class LevelGenerator : MonoBehaviour
 			enemiesPool.AddItem(enemyBlock);
 		}
 
-		CurrentMaxDistanceBetweenEnemies = BaseMaxDistanceBetweenEnemies;
+		foreach(var coin in coinsList)
+		{
+			coinPool.AddItem(coin);
+		}
+
+		CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
 
 		SwapTileSet();
-		
+		BackGround.color = CurrentTileSet.BackgroundColor;
 		
 		var newBlock = blocksPool.PickAvailableItem();
 		newBlock.gameObject.transform.parent = world.transform;
@@ -115,9 +131,11 @@ public class LevelGenerator : MonoBehaviour
 		for (int i = 0; i < BlocksToNotPlaceAnythingInStart; i++)
 		{
 			SpawnGround(GroundSide.Top);
-			SpawnDecor();
+			TrySpawnDecor();
 		}
 	}
+
+	
 
 	private void OnBlockBecameInvisible(BlockBase block)
 	{
@@ -138,10 +156,16 @@ public class LevelGenerator : MonoBehaviour
 		{
 			enemiesPool.AddItem((EnemyBlock)block);
 		}
+		else if(block is Coin)
+		{
+			coinPool.AddItem((Coin)block);
+		}
 	}
 
 	public void FixedUpdate()
 	{
+
+		ProcessTimer();
 		if (lastBlock.Transform.position.x < generataionEdge.position.x)
 		{
 			
@@ -153,9 +177,14 @@ public class LevelGenerator : MonoBehaviour
 			{
 				DefaultSpawn();
 			}
+
 			CurrentDistanceFromLastEnemy++;
 			CurrentDistanceFromLastHugeDecoration++;
 			CurrentBlocksOfSameBiome++;
+			if (DistanceLeftToAllowSpawnEnemy > 0)
+			{
+				DistanceLeftToAllowSpawnEnemy--;
+			}
 		}
 		
 		if(CurrentBlocksOfSameBiome > MinBlockOfSameBiome)
@@ -171,15 +200,31 @@ public class LevelGenerator : MonoBehaviour
 		}
 	}
 
+	private void ProcessTimer()
+	{
+		timerCounting += Time.fixedDeltaTime;
+		if(timerCounting >= timerDurationInSeconds)
+		{
+			OnTimerTick();
+			timerCounting = 0;
+		}
+	}
+
+	private void OnTimerTick()
+	{
+		CurrentDistanceFromLastEnemy++;
+		maxBlocksWater++;
+	}
+
 	private void DefaultSpawn()
 	{
 		SpawnGround(GroundSide.Top);
 
 		if (IsRandomTrue(ChanceToSpawnEnemy))
 		{
-			if (CurrentDistanceFromLastEnemy > CurrentMaxDistanceBetweenEnemies)
+			if (CurrentDistanceFromLastEnemy > CurrentMinDistanceBetweenEnemies)
 			{
-				SpawnEnemy();
+				TrySpawnEnemy();
 
 				CurrentDistanceFromLastEnemy = -1;
 
@@ -188,17 +233,19 @@ public class LevelGenerator : MonoBehaviour
 		}
 		else
 		{
-			SpawnDecor();
+			TrySpawnDecor();
+			TrySpawnCoin();
 		}
+
 	}
 
-	private void SpawnDecor()
+	private void TrySpawnDecor()
 	{
 		if (IsRandomTrue(ChanceToSpawnDecoration))
 		{
 			SpawnSmallDecor();
 		}
-		else
+		else if(IsRandomTrue(ChanceToSpawnHugeDecoration))
 		{
 
 			if (CurrentDistanceFromLastHugeDecoration >= DistanceBetweenHugeDecoration && IsRandomTrue(ChanceToSpawnHugeDecoration))
@@ -208,9 +255,19 @@ public class LevelGenerator : MonoBehaviour
 			}
 		}
 	}
-
-	private void SpawnEnemy()
+	
+	private void TrySpawnCoin()
 	{
+		if (IsRandomTrue(chanceToSpawnCoin))
+		{
+			var coin = SpawnObjectInTheWorld(coinPool);
+			coin.transform.position += Vector3.up * Random.Range(1,3);
+		}
+	}
+
+	private void TrySpawnEnemy()
+	{
+		if(DistanceLeftToAllowSpawnEnemy > 0) { return; }
 		Vector3 newBlockPosition = lastBlock.Transform.position + Vector3.up;
 
 		var rndEnemyInfo = EnemiesInfo[Random.Range(0, EnemiesInfo.Length)];
@@ -306,13 +363,13 @@ public class LevelGenerator : MonoBehaviour
 	private void PlaceWater()
 	{
 		SpawnGround(GroundSide.Top);
-		SpawnDecor();
+		TrySpawnDecor();
 		SpawnGround(GroundSide.Top);
 		SpawnSmallDecor();
 		SpawnGround(GroundSide.Right);
 		SpawnSmallDecor();
 
-		int rnd = Random.Range(2, 3);
+		int rnd = Random.Range(1, maxBlocksWater+1);
 		Sprite rndWater = CurrentTileSet.GetRandomWater();
 		for (int i = 0; i < rnd; i++)
 		{
@@ -330,7 +387,7 @@ public class LevelGenerator : MonoBehaviour
 		SpawnGround(GroundSide.Top);
 		SpawnSmallDecor();
 		SpawnGround(GroundSide.Top);
-		SpawnDecor();
+		TrySpawnDecor();
 		CurrentDistanceFromLastEnemy = 0;
 	}
 }
@@ -346,4 +403,5 @@ public class EnemyInfo
 	public EnemyType Type;
 	public RuntimeAnimatorController Animator;
 	public EntityWalkType GroundEntityType;
+	public Collider2D collider;
 }

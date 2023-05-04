@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3445240995438566698}
   - component: {fileID: 3445240995438566701}
   - component: {fileID: 3445240995438566700}
+  - component: {fileID: 5957854424718551589}
   m_Layer: 0
   m_Name: Chicken
   m_TagString: Untagged
@@ -95,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 3445240995438566703}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 17cd53e95235f3a40a26edbc18417cb1, type: 2}
+  m_Controller: {fileID: 9100000, guid: ea4769ecf45b9174ead93d675035a300, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -105,3 +106,29 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!61 &5957854424718551589
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3445240995438566703}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.058558464, y: -0.1555711}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.5590153, y: 0.61078143}
+  m_EdgeRadius: 0
