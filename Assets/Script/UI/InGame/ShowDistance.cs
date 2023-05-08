@@ -6,10 +6,10 @@ using TMPro;
 public class ShowDistance : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI TextDistance;
-	[SerializeField] private WorldMoving world;
+	[SerializeField] DistanceCounter distanceCounter;
 
 	public void Update()
 	{
-		TextDistance.text = "Вістань: " + Mathf.Floor(world.PassedDistance) + "м";
+		TextDistance.text = "Вістань: " + Mathf.Floor(distanceCounter.distanceInBlocks) + "м";
 	}
 }

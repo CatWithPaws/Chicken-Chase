@@ -8,7 +8,7 @@ public class DeathLayer : MonoBehaviour
 	{
 		if(collision.TryGetComponent(out PlayerController player))
 		{
-			player.Die();
+			player.DieFromDrowning();
 		}
 	}
 }

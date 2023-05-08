@@ -88,6 +88,19 @@ public class LevelGenerator : MonoBehaviour
 	private PoolObject<Coin> coinPool = new PoolObject<Coin>();
 
 	private float chanceToSpawnCoin = 0.5f;
+
+	[SerializeField] private Sprite coinSprite;
+
+	[SerializeField] private PlayerController player;
+	[SerializeField] private WorldMoving worldInfo;
+
+	[SerializeField] private List<BonusBlock> bonusBlocks = new List<BonusBlock>();
+	private PoolObject<BonusBlock> bonusPool = new PoolObject<BonusBlock>();
+
+	private float chanceToSpawnBonus = 0.7f;
+
+	[SerializeField] private DistanceCounter distanceCounter;
+
 	public void Start()
 	{
 		OnPassingBackEdge = null;
@@ -114,6 +127,11 @@ public class LevelGenerator : MonoBehaviour
 		foreach(var coin in coinsList)
 		{
 			coinPool.AddItem(coin);
+		}
+
+		foreach(var bonus in bonusBlocks)
+		{
+			bonusPool.AddItem(bonus);
 		}
 
 		CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
@@ -154,7 +172,9 @@ public class LevelGenerator : MonoBehaviour
 		}
 		else if(block is EnemyBlock)
 		{
-			enemiesPool.AddItem((EnemyBlock)block);
+			EnemyBlock enemyBlock = (EnemyBlock)block;
+			Destroy(enemyBlock.verticalMovement);
+			enemiesPool.AddItem(enemyBlock);
 		}
 		else if(block is Coin)
 		{
@@ -220,9 +240,10 @@ public class LevelGenerator : MonoBehaviour
 	{
 		SpawnGround(GroundSide.Top);
 
+
 		if (IsRandomTrue(ChanceToSpawnEnemy))
 		{
-			if (CurrentDistanceFromLastEnemy > CurrentMinDistanceBetweenEnemies)
+			if (CurrentDistanceFromLastEnemy >= CurrentMinDistanceBetweenEnemies)
 			{
 				TrySpawnEnemy();
 
@@ -261,6 +282,7 @@ public class LevelGenerator : MonoBehaviour
 		if (IsRandomTrue(chanceToSpawnCoin))
 		{
 			var coin = SpawnObjectInTheWorld(coinPool);
+			coin.Sprite.sprite = coinSprite;
 			coin.transform.position += Vector3.up * Random.Range(1,3);
 		}
 	}
@@ -278,15 +300,32 @@ public class LevelGenerator : MonoBehaviour
 		newEnemy.Transform.parent = world.transform;
 
 		float chanceToBeInAir = 0.5f;
+		float chanceToBeMovableInAir = 0.5f;
 
-		if(rndEnemyInfo.GroundEntityType == EntityWalkType.Air && IsRandomTrue(chanceToBeInAir))
+		float minDistance = 0.5f;
+		float maxDistance = 1f;
+		if (rndEnemyInfo.GroundEntityType == EntityWalkType.Air && IsRandomTrue(chanceToBeInAir))
 		{
-			newEnemy.Transform.position = newEnemy.Transform.position  + Vector3.up * 0.5f;
+			if (IsRandomTrue(chanceToBeMovableInAir))
+			{
+				var verticalMovementComponent = newEnemy.gameObject.AddComponent<EnemyVerticalMovement>();
+				verticalMovementComponent.Distance = Random.Range(minDistance, maxDistance);
+				newEnemy.Transform.position = new Vector3(newBlockPosition.x, Random.Range(newBlockPosition.y, newBlockPosition.y + verticalMovementComponent.Distance), newBlockPosition.z);
+				verticalMovementComponent.RewriteCoords();
+				newEnemy.verticalMovement = verticalMovementComponent;
+			}
+			else
+			{
+				newEnemy.Transform.position = newEnemy.Transform.position + Vector3.up * 0.5f;
+			}
 		}
 
 		newEnemy.Animator.runtimeAnimatorController = rndEnemyInfo.Animator;
 		newEnemy.Collider.isTrigger = true;
+
+
 	}
+
 
 	private void SwapTileSet()
 	{
@@ -380,6 +419,7 @@ public class LevelGenerator : MonoBehaviour
 			newBlock.Transform.parent = world.transform;
 			newBlock.Sprite.sprite = rndWater;
 			newBlock.Collider.isTrigger = true;
+			newBlock.gameObject.layer = LayerMask.NameToLayer("Water");
 			lastBlock = newBlock;
 		}
 		SpawnGround(GroundSide.Left);

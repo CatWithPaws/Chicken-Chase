@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public Action OnPlayerDie;
 
     private bool isAlive;
-  
+ 
 
     public bool IsAlive
     {
@@ -60,6 +60,19 @@ public class PlayerController : MonoBehaviour
     private int maxAdditionalJumps = 1;
     private int currentAdditionalJump = 1;
 
+    [SerializeField] private AudioClip coinPickSound;
+    [SerializeField] private AudioClip firstJumpSound;
+	[SerializeField] private AudioClip secondJumpSound;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip drowningSound;
+    [SerializeField] private AudioClip slideSound;
+
+    public bool HasAnyBuff => buffs.Count > 0;
+    public int BuffsCount => buffs.Count;
+
+    private List<Buff> buffs;
+    private List<BuffEffects> appliedEffects;
+
 	private void Awake()
 	{
         GameData.Instance.Player = this;
@@ -106,6 +119,8 @@ public class PlayerController : MonoBehaviour
         {
             print("+Coin");
         }
+
+        AudioManager.Instance?.PlaySFX(coinPickSound);
 	}
 
 	public void ChangeAnimationSpeed(float newSpeed)
@@ -117,7 +132,7 @@ public class PlayerController : MonoBehaviour
     {
         if (IsPlayingGame)
         {
-			Die();
+			DieFromEnemy();
 		}
     }
 
@@ -127,14 +142,37 @@ public class PlayerController : MonoBehaviour
 		IsPlayingGame = true;
         
     }
-    public void Die()
+
+    public void DieFromDrowning()
     {
-        IsAlive = false;
-        IsPlayingGame = false;
-		PlayerState = PlayerState.Idle;
-        OnPlayerDie?.Invoke();
-        GameData.Instance?.SaveCoins();
+        if (IsPlayingGame)
+        {
+            AudioManager.Instance.PlaySound(drowningSound);
+            Die();
+        }
     }
+
+    public void DieFromEnemy()
+    {
+        if (IsPlayingGame)
+        {
+            AudioManager.Instance?.PlaySound(deathSound);
+            Die();
+        }
+    }
+
+    public void ApplyBuff(Buff buff)
+    {
+        buffs.Add(buff);
+    }
+   private void Die()
+    {
+		IsAlive = false;
+		IsPlayingGame = false;
+		PlayerState = PlayerState.Idle;
+		OnPlayerDie?.Invoke();
+		GameData.Instance?.SaveCoins();
+	}
 
     private void CheckForSlideCoolDown()
     {
@@ -194,12 +232,15 @@ public class PlayerController : MonoBehaviour
         if (groundChecker.isGrounded)
         {
             Jump();
+            AudioManager.Instance?.PlaySound(firstJumpSound);
         }
         else if(currentAdditionalJump > 0)
         {
             currentAdditionalJump--;
             Jump();
-        }
+
+			AudioManager.Instance?.PlaySound(secondJumpSound);
+		}
     }
 
 
@@ -215,11 +256,13 @@ public class PlayerController : MonoBehaviour
         {
 			PlayerState = PlayerState.Slide;
             Slide();
-        }
+			AudioManager.Instance?.PlaySound(slideSound);
+		}
         else
         {
             FastFall();
-        }
+			AudioManager.Instance?.PlaySound(slideSound);
+		}
     }
 
     private void Slide()

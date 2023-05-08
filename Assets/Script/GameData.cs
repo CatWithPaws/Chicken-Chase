@@ -8,6 +8,7 @@ public class GameData : MonoBehaviour
 
     public PlayerController Player;
 
+
 	public int CoinsCount;
 
 	private void Awake()

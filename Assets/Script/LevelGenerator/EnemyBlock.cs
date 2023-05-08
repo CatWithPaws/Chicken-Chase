@@ -11,6 +11,8 @@ public class EnemyBlock : BlockBase
 	public Collider2D Collider;
 	public Animator Animator;
 
+	public EnemyVerticalMovement verticalMovement;
+
 	private void Awake()
 	{
 		Collider= GetComponent<Collider2D>();
@@ -22,7 +24,7 @@ public class EnemyBlock : BlockBase
 	{
 		if(collision.gameObject.tag == "Player")
 		{
-			collision.GetComponent<PlayerController>().Die();
+			collision.GetComponent<PlayerController>().DieFromEnemy();
 		}
 	}
 }
