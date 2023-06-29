@@ -7,8 +7,11 @@ public class TileSet : ScriptableObject
 {
 	public Location location;
 	public Sprite[] Ground;
-	public Sprite GroundRightEdge;
-	public Sprite GroundLeftEdge;
+
+    public Sprite GroundLeftEdge;
+    public Sprite GroundRightEdge;
+
+
 	public Sprite[] Water;
 
 	public Sprite[] Decoration;
@@ -39,5 +42,5 @@ public class TileSet : ScriptableObject
 
 public enum Location
 {
-	Forest,Desert
+	Forest,Desert,Snow,RedDesert
 }

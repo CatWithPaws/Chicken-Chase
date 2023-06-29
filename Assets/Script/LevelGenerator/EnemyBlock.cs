@@ -11,7 +11,7 @@ public class EnemyBlock : BlockBase
 	public Collider2D Collider;
 	public Animator Animator;
 
-	public EnemyVerticalMovement verticalMovement;
+	public EnemyVerticalMovement VerticalMovement;
 
 	private void Awake()
 	{

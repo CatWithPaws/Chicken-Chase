@@ -19,9 +19,6 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private Transform OutOfScreenPosition;
 
 	[SerializeField]
-	private Sprite ground;
-
-	[SerializeField]
 	private GameObject world;
 
     [SerializeField]
@@ -64,7 +61,7 @@ public class LevelGenerator : MonoBehaviour
 
 	public EnemyInfo[] EnemiesInfo;
 	private int BaseMinDistanceBetweenEnemies = 4;
-	private int CurrentMinDistanceBetweenEnemies = 3;
+	private int CurrentMinDistanceBetweenEnemies = 4;
 	[SerializeField] private int CurrentDistanceFromLastEnemy = 0;
 
 	[SerializeField] private int DistanceLeftToAllowSpawnEnemy = 1;
@@ -84,22 +81,20 @@ public class LevelGenerator : MonoBehaviour
 	private float timerDurationInSeconds = 60;
 	private float timerCounting = 0;
 
-	[SerializeField] private List<Coin> coinsList;
-	private PoolObject<Coin> coinPool = new PoolObject<Coin>();
+	[SerializeField] private List<CoinBlock> coins;
+	private PoolObject<CoinBlock> coinPool = new PoolObject<CoinBlock>();
 
 	private float chanceToSpawnCoin = 0.5f;
 
 	[SerializeField] private Sprite coinSprite;
 
 	[SerializeField] private PlayerController player;
-	[SerializeField] private WorldMoving worldInfo;
 
-	[SerializeField] private List<BonusBlock> bonusBlocks = new List<BonusBlock>();
-	private PoolObject<BonusBlock> bonusPool = new PoolObject<BonusBlock>();
 
-	private float chanceToSpawnBonus = 0.7f;
+	private int minDistanceBetweenBonuses = 300;
 
-	[SerializeField] private DistanceCounter distanceCounter;
+	private float chanceToSpawnBonus = 0.1f;
+
 
 	public void Start()
 	{
@@ -124,15 +119,11 @@ public class LevelGenerator : MonoBehaviour
 			enemiesPool.AddItem(enemyBlock);
 		}
 
-		foreach(var coin in coinsList)
+		foreach(var coin in coins)
 		{
 			coinPool.AddItem(coin);
 		}
 
-		foreach(var bonus in bonusBlocks)
-		{
-			bonusPool.AddItem(bonus);
-		}
 
 		CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
 
@@ -150,6 +141,9 @@ public class LevelGenerator : MonoBehaviour
 		{
 			SpawnGround(GroundSide.Top);
 			TrySpawnDecor();
+			CurrentDistanceFromLastEnemy++;
+			CurrentDistanceFromLastHugeDecoration++;
+			CurrentBlocksOfSameBiome++;
 		}
 	}
 
@@ -173,13 +167,15 @@ public class LevelGenerator : MonoBehaviour
 		else if(block is EnemyBlock)
 		{
 			EnemyBlock enemyBlock = (EnemyBlock)block;
-			Destroy(enemyBlock.verticalMovement);
+			Destroy(enemyBlock.VerticalMovement);
 			enemiesPool.AddItem(enemyBlock);
 		}
-		else if(block is Coin)
+		else if(block is CoinBlock)
 		{
-			coinPool.AddItem((Coin)block);
-		}
+            coinPool.AddItem((CoinBlock)block);
+
+            print(block.gameObject.name + " object hidden. Coins Available: " + coinPool.PoolSize);
+        }
 	}
 
 	public void FixedUpdate()
@@ -266,25 +262,27 @@ public class LevelGenerator : MonoBehaviour
 		{
 			SpawnSmallDecor();
 		}
-		else if(IsRandomTrue(ChanceToSpawnHugeDecoration))
-		{
 
-			if (CurrentDistanceFromLastHugeDecoration >= DistanceBetweenHugeDecoration && IsRandomTrue(ChanceToSpawnHugeDecoration))
-			{
-				SpawnHugeDecoration();
-				CurrentDistanceFromLastHugeDecoration = -1;
-			}
+
+		else if (CurrentDistanceFromLastHugeDecoration >= DistanceBetweenHugeDecoration && IsRandomTrue(ChanceToSpawnHugeDecoration))
+		{
+			SpawnHugeDecoration();
+			CurrentDistanceFromLastHugeDecoration = -1;
 		}
+
 	}
 	
 	private void TrySpawnCoin()
 	{
 		if (IsRandomTrue(chanceToSpawnCoin))
 		{
+			
 			var coin = SpawnObjectInTheWorld(coinPool);
 			coin.Sprite.sprite = coinSprite;
 			coin.transform.position += Vector3.up * Random.Range(1,3);
-		}
+			DistanceLeftToAllowSpawnEnemy = 1;
+            print(coin.gameObject.name + " object. Coins Left: " + coinPool.PoolSize);
+        }
 	}
 
 	private void TrySpawnEnemy()
@@ -312,7 +310,8 @@ public class LevelGenerator : MonoBehaviour
 				verticalMovementComponent.Distance = Random.Range(minDistance, maxDistance);
 				newEnemy.Transform.position = new Vector3(newBlockPosition.x, Random.Range(newBlockPosition.y, newBlockPosition.y + verticalMovementComponent.Distance), newBlockPosition.z);
 				verticalMovementComponent.RewriteCoords();
-				newEnemy.verticalMovement = verticalMovementComponent;
+				newEnemy.Type = rndEnemyInfo.Type;
+				newEnemy.VerticalMovement = verticalMovementComponent;
 			}
 			else
 			{
@@ -385,12 +384,12 @@ public class LevelGenerator : MonoBehaviour
 
 	private void SetRightSprite(Block block)
 	{
-		block.Sprite.sprite = CurrentTileSet.GroundRightEdge;
+		block.Sprite.sprite = CurrentTileSet.GroundLeftEdge;
 	}
 
 	private void SetLeftSprite(Block block)
 	{
-		block.Sprite.sprite = CurrentTileSet.GroundLeftEdge;
+		block.Sprite.sprite = CurrentTileSet.GroundRightEdge;
 	}
 
 	private bool IsRandomTrue(float chance)
@@ -443,5 +442,4 @@ public class EnemyInfo
 	public EnemyType Type;
 	public RuntimeAnimatorController Animator;
 	public EntityWalkType GroundEntityType;
-	public Collider2D collider;
 }

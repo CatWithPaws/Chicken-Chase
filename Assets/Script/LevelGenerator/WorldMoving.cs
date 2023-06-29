@@ -17,7 +17,7 @@ public class WorldMoving : MonoBehaviour
 
 	[SerializeField] private float speed = 1.5f;
 
-	public ulong PassedDistance { get; private set; }
+	public float PassedDistance { get; private set; }
 
 	private float growingSpeedMultiplierPerSecond = 0.01f;
 
@@ -34,5 +34,7 @@ public class WorldMoving : MonoBehaviour
 			speed += Time.fixedDeltaTime * growingSpeedMultiplierPerSecond;
 		}
 		player.ChangeAnimationSpeed(speed/4);
+
+		PassedDistance += speed * Time.fixedDeltaTime;
 	}
 }

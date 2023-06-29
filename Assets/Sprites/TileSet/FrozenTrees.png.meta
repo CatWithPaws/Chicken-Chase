@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6ba6dc5d6c9001c4ca429d6ea6a27094
+guid: 7edf75c815471b64cb8e5de144c1a5aa
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -112,23 +112,95 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: iPhone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ForestTrees_0
+      name: FrozenTrees_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 288
+        width: 48
+        height: 96
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1261c449a181e594381f611c0e07405e
+      internalID: -2111928888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FrozenTrees_1
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 288
+        width: 48
+        height: 96
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5391b087bf11bdb4b989a0a86ef1d42f
+      internalID: 104561763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FrozenTrees_2
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 288
+        width: 48
+        height: 96
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2c796d55dff1f840b57b30eed213659
+      internalID: 1628806724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FrozenTrees_3
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 288
+        width: 48
+        height: 96
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1d0cb1db1310b4428e81568889abb78
+      internalID: -310498954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FrozenTrees_4
       rect:
         serializedVersion: 2
         x: 0
@@ -142,14 +214,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e97e079879a15ac4ba4cf0a2a45e8eac
-      internalID: -1376640588
+      spriteID: 813bfce6f7f3a164a860df7f06469de4
+      internalID: 1120252861
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_1
+      name: FrozenTrees_5
       rect:
         serializedVersion: 2
         x: 48
@@ -163,14 +235,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c7ee491fc15f70f4484e89109be9d050
-      internalID: -361169347
+      spriteID: dffb4a32a98633e42a04ebab668ac4fd
+      internalID: -503956761
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_2
+      name: FrozenTrees_6
       rect:
         serializedVersion: 2
         x: 96
@@ -184,14 +256,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 21002b9ccb796fd4fbd5bc3247bed4c6
-      internalID: -2007776359
+      spriteID: 522fd32fb1c9e4542b018de10c4780b7
+      internalID: 294187584
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_3
+      name: FrozenTrees_7
       rect:
         serializedVersion: 2
         x: 144
@@ -205,56 +277,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5d2f6bd27d1682047833dc15892a4155
-      internalID: 266922669
+      spriteID: b2614d8122444c74ab17f0e768593431
+      internalID: 368141809
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_4
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 192
-        width: 48
-        height: 96
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d3d3e89233ab74645aec34c146fa15d5
-      internalID: -126672961
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ForestTrees_5
-      rect:
-        serializedVersion: 2
-        x: 240
-        y: 192
-        width: 48
-        height: 96
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b99699cea8c8a9644b82f647f6169dcf
-      internalID: -1645858994
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ForestTrees_6
+      name: FrozenTrees_8
       rect:
         serializedVersion: 2
         x: 0
@@ -268,14 +298,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a810ea5bdc12d2448344d0d38050997
-      internalID: -1162634831
+      spriteID: 9968c62b3e5adb24cab6fa6ca3fe44cc
+      internalID: 1007863776
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_7
+      name: FrozenTrees_9
       rect:
         serializedVersion: 2
         x: 48
@@ -289,14 +319,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e3523621581d9d49bf40b0d1abf5c26
-      internalID: 308646253
+      spriteID: 99458d6db70ccf942ac9d680adde16ec
+      internalID: -197839762
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_8
+      name: FrozenTrees_10
       rect:
         serializedVersion: 2
         x: 96
@@ -310,14 +340,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 81079e34dc0c4f642b7aa7c6eda4337b
-      internalID: 1881726009
+      spriteID: cb5f94cbefd1d494195d4c8a81359652
+      internalID: 1959161351
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_9
+      name: FrozenTrees_11
       rect:
         serializedVersion: 2
         x: 144
@@ -331,35 +361,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 509c09cde1d2dc9428268b005d5fa5d2
-      internalID: 582235208
+      spriteID: b569e1501d7fb7b4584ab55fccc0b981
+      internalID: -61573349
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_10
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 96
-        width: 48
-        height: 96
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 457aad53385a2a84ea0110fc26875468
-      internalID: -521525677
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: ForestTrees_11
+      name: FrozenTrees_12
       rect:
         serializedVersion: 2
         x: 0
@@ -373,14 +382,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c268db39ec248cb41bfc61e8285ab610
-      internalID: 1922468029
+      spriteID: f43d21b71d12bd242becad2fd2be3bf5
+      internalID: 257069973
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_12
+      name: FrozenTrees_13
       rect:
         serializedVersion: 2
         x: 48
@@ -394,14 +403,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d72abdba06b3051438e9a6940bc4fef7
-      internalID: 1029608094
+      spriteID: f4ce762546f619f46814ef6d97de6099
+      internalID: 101542496
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_13
+      name: FrozenTrees_14
       rect:
         serializedVersion: 2
         x: 96
@@ -415,14 +424,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 72cc6d9343e296e45a588c12c5d3c45a
-      internalID: 1074785970
+      spriteID: 78f9c7f5f2cb5db469ddbfb4b80584dc
+      internalID: 1620966977
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ForestTrees_14
+      name: FrozenTrees_15
       rect:
         serializedVersion: 2
         x: 144
@@ -436,8 +445,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a30614c9a909e6f47b3c6d18c25a0be5
-      internalID: -1305847457
+      spriteID: faf4657e81e51924fb9f0de07415d4de
+      internalID: 1792824903
       vertices: []
       indices: 
       edges: []
@@ -453,21 +462,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ForestTrees_0: -1376640588
-      ForestTrees_11: 1922468029
-      ForestTrees_2: -2007776359
-      ForestTrees_1: -361169347
-      ForestTrees_4: -126672961
-      ForestTrees_9: 582235208
-      ForestTrees_12: 1029608094
-      ForestTrees_10: -521525677
-      ForestTrees_5: -1645858994
-      ForestTrees_7: 308646253
-      ForestTrees_6: -1162634831
-      ForestTrees_3: 266922669
-      ForestTrees_14: -1305847457
-      ForestTrees_8: 1881726009
-      ForestTrees_13: 1074785970
+      FrozenTrees_0: -2111928888
+      FrozenTrees_2: 1628806724
+      FrozenTrees_11: -61573349
+      FrozenTrees_1: 104561763
+      FrozenTrees_12: 257069973
+      FrozenTrees_5: -503956761
+      FrozenTrees_6: 294187584
+      FrozenTrees_14: 1620966977
+      FrozenTrees_7: 368141809
+      FrozenTrees_3: -310498954
+      FrozenTrees_8: 1007863776
+      FrozenTrees_15: 1792824903
+      FrozenTrees_10: 1959161351
+      FrozenTrees_9: -197839762
+      FrozenTrees_4: 1120252861
+      FrozenTrees_13: 101542496
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -26,9 +26,6 @@ public class GroundChecker : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if(collision.gameObject.TryGetComponent(out EnemyBlock enemy))
-        {
-            player.OnEnemyTouch(enemy);
-		}
+		
 	}
 }

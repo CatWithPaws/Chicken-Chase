@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : BlockBase
+public class CoinBlock : BlockBase
 {
-	public Collider2D Collider;
-
+    
 }

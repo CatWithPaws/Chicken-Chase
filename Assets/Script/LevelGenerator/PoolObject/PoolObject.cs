@@ -1,16 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class PoolObject<T>
 {
     private Queue<T> objectList = new Queue<T>();
 
+    public int PoolSize => objectList.Count;
+
     public void AddItem(T item)
     {
-        objectList.Enqueue(item);
+        if (!objectList.Contains(item))
+        {
+            objectList.Enqueue(item);
+        }
+       
     }
 
     public T PickAvailableItem()

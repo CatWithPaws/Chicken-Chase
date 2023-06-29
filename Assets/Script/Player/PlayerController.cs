@@ -22,8 +22,11 @@ public class PlayerController : MonoBehaviour
             isAlive = value;
         }
     }
-    [SerializeField] private Collider2D defaultCollider;
-    [SerializeField] private Collider2D slideCollider;
+
+    [SerializeField] private BoxCollider2D defaultCollider;
+    [SerializeField] private BoxCollider2D slideCollider;
+
+    [SerializeField] private BoxCollider2D playerCollider;
 
     [SerializeField] private LayerMask groundLayer;
 
@@ -32,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GroundChecker groundChecker;
 
     [SerializeField] private PlayerState playerState;
+
     private PlayerState PlayerState
     {
         get 
@@ -48,6 +52,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private PhysicsComponent physics;
     [SerializeField] private AnimationComponent animations;
+    [SerializeField] private BuffComponent buffs;
 
     private float slidingDuration = 0.5f;
 
@@ -57,8 +62,11 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private CoinsUI coinsUI;
 
-    private int maxAdditionalJumps = 1;
-    private int currentAdditionalJump = 1;
+    private int baseAdditionalJumps = 1;
+    private int modificatorOfAdditionalJumps = 0;
+    private int finalAdditionalJumps => baseAdditionalJumps + modificatorOfAdditionalJumps;
+
+    private int currentAdditionalJump = 0;
 
     [SerializeField] private AudioClip coinPickSound;
     [SerializeField] private AudioClip firstJumpSound;
@@ -67,11 +75,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip drowningSound;
     [SerializeField] private AudioClip slideSound;
 
-    public bool HasAnyBuff => buffs.Count > 0;
-    public int BuffsCount => buffs.Count;
-
-    private List<Buff> buffs;
-    private List<BuffEffects> appliedEffects;
 
 	private void Awake()
 	{
@@ -95,13 +98,13 @@ public class PlayerController : MonoBehaviour
 	{
         if (groundChecker.lastIsGrounded != groundChecker.isGrounded && groundChecker.isGrounded == true)
         {
-            currentAdditionalJump = maxAdditionalJumps;
+            currentAdditionalJump = finalAdditionalJumps;
         }
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.gameObject.TryGetComponent(out Coin coin))
+		if (collision.gameObject.TryGetComponent(out CoinBlock coin))
 		{
             AddCoins(1);   
             LevelGenerator.OnPassingBackEdge(coin);
@@ -147,7 +150,7 @@ public class PlayerController : MonoBehaviour
     {
         if (IsPlayingGame)
         {
-            AudioManager.Instance.PlaySound(drowningSound);
+            AudioManager.Instance?.PlaySound(drowningSound);
             Die();
         }
     }
@@ -161,10 +164,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ApplyBuff(Buff buff)
-    {
-        buffs.Add(buff);
-    }
    private void Die()
     {
 		IsAlive = false;
@@ -254,7 +253,6 @@ public class PlayerController : MonoBehaviour
     {
         if(groundChecker.isGrounded)
         {
-			PlayerState = PlayerState.Slide;
             Slide();
 			AudioManager.Instance?.PlaySound(slideSound);
 		}
@@ -274,9 +272,9 @@ public class PlayerController : MonoBehaviour
 
     private void SwitchCollider()
     {
-		defaultCollider.enabled = playerState != PlayerState.Slide;
-		slideCollider.enabled = playerState == PlayerState.Slide;
-	}
+        playerCollider.size = playerState == PlayerState.Slide ? slideCollider.size: defaultCollider.size;
+		playerCollider.offset = playerState == PlayerState.Slide ? slideCollider.offset : defaultCollider.offset;
+    }
 
     private void FastFall()
     {
@@ -287,6 +285,16 @@ public class PlayerController : MonoBehaviour
     private void OffSlideTimer()
     {
         slideTimeLeft = 0;
+    }
+
+    public void AddAdditionalJumps(int value)
+    {
+        modificatorOfAdditionalJumps += value;
+    }
+
+    public void SubstractAdditionalJumps(int value)
+    {
+        modificatorOfAdditionalJumps -= value;
     }
 
 }

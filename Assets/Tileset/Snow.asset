@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a87ff7780bc551468248428f9759219, type: 3}
+  m_Name: Snow
+  m_EditorClassIdentifier: 
+  location: 0
+  Ground:
+  - {fileID: -123694463, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  - {fileID: 2072625105, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  - {fileID: 422518567, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  GroundLeftEdge: {fileID: 672455090, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  GroundRightEdge: {fileID: 1759329550, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  Water:
+  - {fileID: -413464929, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  - {fileID: 1521375288, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  - {fileID: -780762790, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  - {fileID: 586548059, guid: b20e4181860819545b7891170dbb1580, type: 3}
+  Decoration:
+  - {fileID: 1187713854, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 1024772092, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -939796348, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -369279537, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -1403882903, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 79969534, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -911469815, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -1192668179, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -1025498828, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -243976263, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 1353888538, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 1358417040, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -2118280655, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -712972143, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -1148414022, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 1588576741, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: 963652392, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -1496458377, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  - {fileID: -670682011, guid: 3cff78d7ffa08e3479333da9c91a47b2, type: 3}
+  HugeDecoration:
+  - {fileID: -2111928888, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 104561763, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1628806724, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: -310498954, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1120252861, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: -503956761, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 294187584, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 368141809, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1007863776, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: -197839762, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1959161351, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: -61573349, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 257069973, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 101542496, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1620966977, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  - {fileID: 1792824903, guid: 7edf75c815471b64cb8e5de144c1a5aa, type: 3}
+  BackgroundColor: {r: 0, g: 0, b: 0, a: 1}
