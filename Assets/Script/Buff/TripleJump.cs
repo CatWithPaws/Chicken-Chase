@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class TripleJump : Buff
 {
@@ -12,6 +9,11 @@ public class TripleJump : Buff
     {
         Type = BuffType.TripleJump;
         Duration = baseDuration;
+    }
+
+    public override Buff Clone()
+    {
+        return new TripleJump();
     }
 
     public override void OnBuffEnd(PlayerController player)

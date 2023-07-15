@@ -12,6 +12,7 @@ enum GroundSide
 
 public class LevelGenerator : MonoBehaviour
 {
+	private delegate void VoidFunc();
 	private delegate void ChangeSpriteFunc(Block block);
 
 	public static System.Action<BlockBase> OnPassingBackEdge;
@@ -57,17 +58,17 @@ public class LevelGenerator : MonoBehaviour
 
 	private int DistanceBetweenHugeDecoration = 2;
 
-	[SerializeField] private int CurrentDistanceFromLastHugeDecoration = 0;
+	[SerializeField] private int currentDistanceFromLastHugeDecoration = 0;
 
 	public EnemyInfo[] EnemiesInfo;
 	private int BaseMinDistanceBetweenEnemies = 4;
 	private int CurrentMinDistanceBetweenEnemies = 4;
-	[SerializeField] private int CurrentDistanceFromLastEnemy = 0;
+	[SerializeField] private int currentDistanceFromLastEnemy = 0;
 
 	[SerializeField] private int DistanceLeftToAllowSpawnEnemy = 1;
 
 	private int MinBlockOfSameBiome = 50;
-	private int CurrentBlocksOfSameBiome = 0;
+	private int currentBlocksOfSameBiome = 0;
 
 	private int maxBlocksWater = 2;
 
@@ -91,65 +92,106 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private PlayerController player;
 
 
-	private int minDistanceBetweenBonuses = 300;
+	private int minDistanceBetweenBuff = 50;
+	private int currentDistanceFromLastBuff = 0;
 
-	private float chanceToSpawnBonus = 0.1f;
+	private float chanceToSpawnBuff = 0.1f;
 
+	private PoolObject<BuffBlock> buffPool = new PoolObject<BuffBlock>();
 
-	public void Start()
+	[SerializeField] private List<BuffBlock> buffs;
+	[SerializeField] private Sprite magnetSprite;
+	[SerializeField] private Sprite bridgeSprite;
+	[SerializeField] private Sprite tripleJumpSprite;
+	[SerializeField] private Sprite invincibilitySprite;
+
+	[SerializeField] private Dictionary<BuffType, Sprite> spritesByBuffTypeList = new Dictionary<BuffType, Sprite>();
+	private (BuffType, Buff)[] buffsInstances = new (BuffType, Buff)[]
 	{
-		OnPassingBackEdge = null;
-
-		SetBlockSprite[0] = SetLeftSprite;
-		SetBlockSprite[1] = SetTopSprite;
-		SetBlockSprite[2] = SetRightSprite;
-
-		foreach (var block in blocks)
-		{
-			blocksPool.AddItem(block);
-		}
-
-		foreach(var decoration in hugeDecorations)
-		{
-			hugeDecorationPool.AddItem(decoration);
-		}
-
-		foreach(var enemyBlock in enemyBlocks)
-		{
-			enemiesPool.AddItem(enemyBlock);
-		}
-
-		foreach(var coin in coins)
-		{
-			coinPool.AddItem(coin);
-		}
-
-
-		CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
-
-		SwapTileSet();
-		BackGround.color = CurrentTileSet.BackgroundColor;
-		
-		var newBlock = blocksPool.PickAvailableItem();
-		newBlock.gameObject.transform.parent = world.transform;
-		newBlock.gameObject.transform.position = startPoint.position;
-		newBlock.Sprite.sprite = CurrentTileSet.GetRandomGround();
-		lastBlock = newBlock;
-		OnPassingBackEdge += OnBlockBecameInvisible;
-
-		for (int i = 0; i < BlocksToNotPlaceAnythingInStart; i++)
-		{
-			SpawnGround(GroundSide.Top);
-			TrySpawnDecor();
-			CurrentDistanceFromLastEnemy++;
-			CurrentDistanceFromLastHugeDecoration++;
-			CurrentBlocksOfSameBiome++;
-		}
+		(BuffType.TripleJump,new TripleJump()),
+		(BuffType.Invincibility, new Invincibility())
+	};
+	private void Awake()
+	{ 
 	}
 
-	
+    public void Start()
+    {
+        OnPassingBackEdge = null;
+        InitSetSpriteFunction();
 
-	private void OnBlockBecameInvisible(BlockBase block)
+        LoadPools();
+
+		spritesByBuffTypeList.Add(BuffType.TripleJump, tripleJumpSprite);
+		spritesByBuffTypeList.Add(BuffType.Invincibility, invincibilitySprite);
+
+        CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
+
+        SwapTileSet();
+        BackGround.color = CurrentTileSet.BackgroundColor;
+        CreateFirstGroundBlock();
+
+        GenerateSafeArea();
+    }
+
+    private void CreateFirstGroundBlock()
+    {
+        var newBlock = blocksPool.PickAvailableItem();
+        newBlock.gameObject.transform.parent = world.transform;
+        newBlock.gameObject.transform.position = startPoint.position;
+        newBlock.Sprite.sprite = CurrentTileSet.GetRandomGround();
+        lastBlock = newBlock;
+        OnPassingBackEdge += OnBlockBecameInvisible;
+    }
+
+    private void GenerateSafeArea()
+    {
+        for (int i = 0; i < BlocksToNotPlaceAnythingInStart; i++)
+        {
+            SpawnGroundWithDecoration(GroundSide.Top);
+            currentDistanceFromLastEnemy++;
+            currentDistanceFromLastHugeDecoration++;
+            currentBlocksOfSameBiome++;
+        }
+    }
+
+    private void InitSetSpriteFunction()
+    {
+        SetBlockSprite[0] = SetLeftSprite;
+        SetBlockSprite[1] = SetTopSprite;
+        SetBlockSprite[2] = SetRightSprite;
+    }
+
+    private void LoadPools()
+    {
+        foreach (var block in blocks)
+        {
+            blocksPool.AddItem(block);
+        }
+
+        foreach (var decoration in hugeDecorations)
+        {
+            hugeDecorationPool.AddItem(decoration);
+        }
+
+        foreach (var enemyBlock in enemyBlocks)
+        {
+            enemiesPool.AddItem(enemyBlock);
+        }
+
+        foreach (var coin in coins)
+        {
+            coinPool.AddItem(coin);
+        }
+
+        foreach (var buff in buffs)
+        {
+            buffPool.AddItem(buff);
+        }
+    }
+
+
+    private void OnBlockBecameInvisible(BlockBase block)
 	{
 		block.Transform.parent = null;
 		block.Sprite.sprite = null;
@@ -174,7 +216,6 @@ public class LevelGenerator : MonoBehaviour
 		{
             coinPool.AddItem((CoinBlock)block);
 
-            print(block.gameObject.name + " object hidden. Coins Available: " + coinPool.PoolSize);
         }
 	}
 
@@ -183,27 +224,11 @@ public class LevelGenerator : MonoBehaviour
 
 		ProcessTimer();
 		if (lastBlock.Transform.position.x < generataionEdge.position.x)
-		{
-			
-			if (IsRandomTrue(ChanceToSetWater))
-			{
-				PlaceWater();
-			}
-			else
-			{
-				DefaultSpawn();
-			}
+        {
+            DoGeneratorTick();
+        }
 
-			CurrentDistanceFromLastEnemy++;
-			CurrentDistanceFromLastHugeDecoration++;
-			CurrentBlocksOfSameBiome++;
-			if (DistanceLeftToAllowSpawnEnemy > 0)
-			{
-				DistanceLeftToAllowSpawnEnemy--;
-			}
-		}
-		
-		if(CurrentBlocksOfSameBiome > MinBlockOfSameBiome)
+        if (currentBlocksOfSameBiome > MinBlockOfSameBiome)
 		{
 			if (IsRandomTrue(ChanceToChangeTileSet))
 			{
@@ -211,12 +236,41 @@ public class LevelGenerator : MonoBehaviour
 			}
 			else
 			{
-				CurrentBlocksOfSameBiome = 0;
+				currentBlocksOfSameBiome = 0;
 			}
 		}
 	}
 
-	private void ProcessTimer()
+    private void DoGeneratorTick()
+    {
+        if (IsRandomTrue(ChanceToSetWater))
+        {
+            PlaceWater();
+        }
+        else if (IsRandomTrue(chanceToSpawnBuff) && currentDistanceFromLastBuff >= minDistanceBetweenBuff)
+        {
+			if (!player.hasAnyBuff)
+			{
+				print("bufff");
+				SpawnBuffPlace();
+			}
+        }
+        else
+        {
+            DefaultSpawn();
+        }
+
+        currentDistanceFromLastEnemy++;
+        currentDistanceFromLastHugeDecoration++;
+        currentBlocksOfSameBiome++;
+		currentDistanceFromLastBuff++;
+        if (DistanceLeftToAllowSpawnEnemy > 0)
+        {
+            DistanceLeftToAllowSpawnEnemy--;
+        }
+    }
+
+    private void ProcessTimer()
 	{
 		timerCounting += Time.fixedDeltaTime;
 		if(timerCounting >= timerDurationInSeconds)
@@ -228,7 +282,7 @@ public class LevelGenerator : MonoBehaviour
 
 	private void OnTimerTick()
 	{
-		CurrentDistanceFromLastEnemy++;
+		currentDistanceFromLastEnemy++;
 		maxBlocksWater++;
 	}
 
@@ -239,11 +293,11 @@ public class LevelGenerator : MonoBehaviour
 
 		if (IsRandomTrue(ChanceToSpawnEnemy))
 		{
-			if (CurrentDistanceFromLastEnemy >= CurrentMinDistanceBetweenEnemies)
+			if (currentDistanceFromLastEnemy >= CurrentMinDistanceBetweenEnemies)
 			{
 				TrySpawnEnemy();
 
-				CurrentDistanceFromLastEnemy = -1;
+				currentDistanceFromLastEnemy = -1;
 
 				return;
 			}
@@ -256,6 +310,54 @@ public class LevelGenerator : MonoBehaviour
 
 	}
 
+	private void SpawnBuffPlace()
+	{
+		int DistanceBeforeAndAfterBuff = 5;
+
+        for(int i = 0; i < DistanceBeforeAndAfterBuff; i++)
+		{
+            SpawnGroundWithDecoration(GroundSide.Top);
+        }
+
+        SpawnGroundWithDecoration(GroundSide.Top);
+        SpawnBuff();
+
+        for (int i = 0; i < DistanceBeforeAndAfterBuff; i++)
+        {
+            SpawnGroundWithDecoration(GroundSide.Top);
+        }
+    }
+
+	private void SpawnGroundWithDecoration(GroundSide groundSide)
+	{
+        SpawnGround(groundSide);
+        TrySpawnDecor();
+
+    }
+
+	private void SpawnBuff()
+	{
+		BuffBlock buff = (BuffBlock)SpawnObjectInTheWorld(buffPool);
+		buff.Transform.Translate(Vector2.up*2);
+		BuffType rndType = (BuffType)Random.Range(0, (int)BuffType.Count);
+		buff.Sprite.sprite = spritesByBuffTypeList[rndType];
+		buff.Buff = GetBuffByType(rndType);
+		
+	}
+
+	private Buff GetBuffByType(BuffType type)
+	{
+		foreach(var item in buffsInstances)
+		{
+			if (item.Item1 == type)
+			{
+				return item.Item2;
+			}
+		}
+		Debug.LogError("There is no buff with type: " + type.ToString());
+		return default;
+	}
+
 	private void TrySpawnDecor()
 	{
 		if (IsRandomTrue(ChanceToSpawnDecoration))
@@ -264,10 +366,10 @@ public class LevelGenerator : MonoBehaviour
 		}
 
 
-		else if (CurrentDistanceFromLastHugeDecoration >= DistanceBetweenHugeDecoration && IsRandomTrue(ChanceToSpawnHugeDecoration))
+		else if (currentDistanceFromLastHugeDecoration >= DistanceBetweenHugeDecoration && IsRandomTrue(ChanceToSpawnHugeDecoration))
 		{
 			SpawnHugeDecoration();
-			CurrentDistanceFromLastHugeDecoration = -1;
+			currentDistanceFromLastHugeDecoration = -1;
 		}
 
 	}
@@ -281,7 +383,6 @@ public class LevelGenerator : MonoBehaviour
 			coin.Sprite.sprite = coinSprite;
 			coin.transform.position += Vector3.up * Random.Range(1,3);
 			DistanceLeftToAllowSpawnEnemy = 1;
-            print(coin.gameObject.name + " object. Coins Left: " + coinPool.PoolSize);
         }
 	}
 
@@ -427,7 +528,7 @@ public class LevelGenerator : MonoBehaviour
 		SpawnSmallDecor();
 		SpawnGround(GroundSide.Top);
 		TrySpawnDecor();
-		CurrentDistanceFromLastEnemy = 0;
+		currentDistanceFromLastEnemy = 0;
 	}
 }
 

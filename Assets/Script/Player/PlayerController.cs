@@ -75,6 +75,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip drowningSound;
     [SerializeField] private AudioClip slideSound;
 
+    public bool IsInvincible = false;
+
+    public bool hasAnyBuff => buffs.Buffs.Count > 0;
 
 	private void Awake()
 	{
@@ -104,12 +107,17 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.gameObject.TryGetComponent(out CoinBlock coin))
+		if (collision.gameObject.TryGetComponent(out CoinBlock coinBlock))
 		{
             AddCoins(1);   
-            LevelGenerator.OnPassingBackEdge(coin);
+            LevelGenerator.OnPassingBackEdge(coinBlock);
 		}
-	}
+        if (collision.gameObject.TryGetComponent(out BuffBlock buffBlock))
+        {
+            buffs.AddBuff(buffBlock.Buff);
+            LevelGenerator.OnPassingBackEdge(buffBlock);
+        }
+    }
 
     public void AddCoins(int count)
     {
@@ -133,7 +141,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnEnemyTouch(EnemyBlock enemy)
     {
-        if (IsPlayingGame)
+        if (IsPlayingGame && !IsInvincible)
         {
 			DieFromEnemy();
 		}
@@ -157,7 +165,7 @@ public class PlayerController : MonoBehaviour
 
     public void DieFromEnemy()
     {
-        if (IsPlayingGame)
+        if (IsPlayingGame & !IsInvincible)
         {
             AudioManager.Instance?.PlaySound(deathSound);
             Die();

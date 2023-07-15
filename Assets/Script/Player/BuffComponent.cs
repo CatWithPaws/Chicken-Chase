@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Timers;
+using TMPro;
 
 public class BuffComponent : MonoBehaviour
 {
@@ -11,7 +12,10 @@ public class BuffComponent : MonoBehaviour
 
     private Timer timer;
 
-    private int TimerTickPeriod = 10;
+    private int TimerTickPeriod = 100;
+    private float millisecondsInSecond = 1000;
+
+    [SerializeField] private TextMeshProUGUI DebugBuffInfo;
 
     private void Awake()
     {
@@ -21,22 +25,33 @@ public class BuffComponent : MonoBehaviour
     private void StartTimer()
     {
         timer = new Timer(TimerTickPeriod);
-        timer.Elapsed += OnSecondPassed;
+        //timer.Elapsed += OnSecondPassed;
         timer.AutoReset = true;
-        timer.Start();
+        //timer.Start();
     }
 
-    private void OnSecondPassed(object sender, ElapsedEventArgs e)
+    private void OnDestroy()
     {
-        foreach (Buff buff in Buffs)
+        timer.Dispose();
+        Buffs.Clear();
+    }
+
+    private void Update()
+    {
+        DebugBuffInfo.text = "";
+        foreach (Buff buff in Buffs.ToArray())
         {
-            buff.Duration -= TimerTickPeriod;
+            buff.Duration -= Time.deltaTime;
 
             if(buff.Duration <= 0)
             {
                 buff.OnBuffEnd(player);
                 RemoveBuff(buff);
+                continue;
             }
+
+            DebugBuffInfo.text += "BuffType: " + buff.Type + "\n";
+            DebugBuffInfo.text += "Duration: " + buff.Duration + "\n\n";
         }
     }
 
@@ -46,16 +61,21 @@ public class BuffComponent : MonoBehaviour
         {
             Buff existedBuff = Buffs.First(i => i.Type == buff.Type);
             existedBuff.Duration = buff.Duration;
+            print("Buff extended " + buff.Type);
         }
         else
         {
             Buffs.Add(buff);
             buff.OnBuffStart(player);
+            print("Buff Added " + buff.Type);
         }
+
+
     }
 
     private void RemoveBuff(Buff buff)
     {
         Buffs.Remove(buff);
+        print("Buff removed " + buff.Type);
     }
 }
