@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[System.Serializable]
 public abstract class Buff
 {
     public float Duration;
+    protected float baseDuration;
+    public float BaseDuration => baseDuration;
     public BuffType Type;
+    public Sprite Icon;
 
     public abstract void OnBuffStart(PlayerController player);
     public abstract void OnBuffEnd(PlayerController player);
 
     public abstract Buff Clone();
+
 }
 
 public enum BuffType

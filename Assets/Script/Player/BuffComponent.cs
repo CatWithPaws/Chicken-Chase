@@ -13,7 +13,6 @@ public class BuffComponent : MonoBehaviour
     private Timer timer;
 
     private int TimerTickPeriod = 100;
-    private float millisecondsInSecond = 1000;
 
     [SerializeField] private TextMeshProUGUI DebugBuffInfo;
 
@@ -57,9 +56,9 @@ public class BuffComponent : MonoBehaviour
 
     public void AddBuff(Buff buff)
     {
-        if (Buffs.Contains(buff))
+        Buff existedBuff = Buffs.FirstOrDefault(i => i.Type == buff.Type);
+        if (existedBuff != null)
         {
-            Buff existedBuff = Buffs.First(i => i.Type == buff.Type);
             existedBuff.Duration = buff.Duration;
             print("Buff extended " + buff.Type);
         }

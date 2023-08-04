@@ -10,6 +10,6 @@ public class ShowDistance : MonoBehaviour
 
 	public void Update()
 	{
-		TextDistance.text = "Distance: " + Mathf.Floor(world.PassedDistance) + "ì";
+		TextDistance.text =  Mathf.Floor(world.PassedDistance) + "m";
 	}
 }

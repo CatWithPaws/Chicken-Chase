@@ -20,7 +20,7 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private Transform OutOfScreenPosition;
 
 	[SerializeField]
-	private GameObject world;
+	private WorldMoving world;
 
     [SerializeField]
     private List<Block> blocks = new List<Block>();
@@ -61,16 +61,18 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private int currentDistanceFromLastHugeDecoration = 0;
 
 	public EnemyInfo[] EnemiesInfo;
-	private int BaseMinDistanceBetweenEnemies = 4;
-	private int CurrentMinDistanceBetweenEnemies = 4;
+	private float currentMinDistanceBetweenEnemies = 4;
 	[SerializeField] private int currentDistanceFromLastEnemy = 0;
+
+	private int capOfMaxDistanceBetweenEnemies = 10;
 
 	[SerializeField] private int DistanceLeftToAllowSpawnEnemy = 1;
 
 	private int MinBlockOfSameBiome = 50;
 	private int currentBlocksOfSameBiome = 0;
 
-	private int maxBlocksWater = 2;
+	private float currentMaxBlocksWater = 2;
+	private int capOfMaxBlocksWater = 10;
 
 	private int BlocksToNotPlaceAnythingInStart = 30;
 
@@ -92,7 +94,7 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private PlayerController player;
 
 
-	private int minDistanceBetweenBuff = 50;
+	private int minDistanceBetweenBuff = 100;
 	private int currentDistanceFromLastBuff = 0;
 
 	private float chanceToSpawnBuff = 0.1f;
@@ -106,14 +108,23 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] private Sprite invincibilitySprite;
 
 	[SerializeField] private Dictionary<BuffType, Sprite> spritesByBuffTypeList = new Dictionary<BuffType, Sprite>();
+
+	float distanceToIncreaseRiverByOneBlock = 200;
+	float distanceToIncreaseDistanceBetweenEnemies = 200;
+
 	private (BuffType, Buff)[] buffsInstances = new (BuffType, Buff)[]
 	{
 		(BuffType.TripleJump,new TripleJump()),
 		(BuffType.Invincibility, new Invincibility())
 	};
 	private void Awake()
-	{ 
-	}
+    {
+        spritesByBuffTypeList.Add(BuffType.TripleJump, tripleJumpSprite);
+        spritesByBuffTypeList.Add(BuffType.Invincibility, invincibilitySprite);
+
+        buffsInstances[0].Item2.Icon = tripleJumpSprite;
+        buffsInstances[1].Item2.Icon = invincibilitySprite;
+    }
 
     public void Start()
     {
@@ -121,11 +132,6 @@ public class LevelGenerator : MonoBehaviour
         InitSetSpriteFunction();
 
         LoadPools();
-
-		spritesByBuffTypeList.Add(BuffType.TripleJump, tripleJumpSprite);
-		spritesByBuffTypeList.Add(BuffType.Invincibility, invincibilitySprite);
-
-        CurrentMinDistanceBetweenEnemies = BaseMinDistanceBetweenEnemies;
 
         SwapTileSet();
         BackGround.color = CurrentTileSet.BackgroundColor;
@@ -198,24 +204,25 @@ public class LevelGenerator : MonoBehaviour
 		block.Transform.position = OutOfScreenPosition.position;
 		block.gameObject.layer = otherLayer;
 
-		if (block is Block)
+		switch (block)
 		{
-			blocksPool.AddItem((Block)block);
-		}
-		else if(block is HugeDecoration)
-		{
-			hugeDecorationPool.AddItem((HugeDecoration)block);
-		}
-		else if(block is EnemyBlock)
-		{
-			EnemyBlock enemyBlock = (EnemyBlock)block;
-			Destroy(enemyBlock.VerticalMovement);
-			enemiesPool.AddItem(enemyBlock);
-		}
-		else if(block is CoinBlock)
-		{
-            coinPool.AddItem((CoinBlock)block);
-
+			case Block:
+                blocksPool.AddItem((Block)block);
+                break;
+			case HugeDecoration:
+                hugeDecorationPool.AddItem((HugeDecoration)block);
+				break;
+			case EnemyBlock:
+                EnemyBlock enemyBlock = (EnemyBlock)block;
+                Destroy(enemyBlock.VerticalMovement);
+                enemiesPool.AddItem(enemyBlock);
+                break;
+			case CoinBlock:
+                coinPool.AddItem((CoinBlock)block);
+                break;
+			case BuffBlock:
+				buffPool.AddItem((BuffBlock)block);
+				break;
         }
 	}
 
@@ -251,7 +258,6 @@ public class LevelGenerator : MonoBehaviour
         {
 			if (!player.hasAnyBuff)
 			{
-				print("bufff");
 				SpawnBuffPlace();
 			}
         }
@@ -259,6 +265,11 @@ public class LevelGenerator : MonoBehaviour
         {
             DefaultSpawn();
         }
+
+
+		currentMaxBlocksWater = Mathf.Clamp(currentMaxBlocksWater + (1 / distanceToIncreaseRiverByOneBlock), 0, capOfMaxBlocksWater);
+		currentMinDistanceBetweenEnemies = Mathf.Clamp(currentMinDistanceBetweenEnemies + (1 / distanceToIncreaseDistanceBetweenEnemies), 0, capOfMaxDistanceBetweenEnemies);
+
 
         currentDistanceFromLastEnemy++;
         currentDistanceFromLastHugeDecoration++;
@@ -283,7 +294,7 @@ public class LevelGenerator : MonoBehaviour
 	private void OnTimerTick()
 	{
 		currentDistanceFromLastEnemy++;
-		maxBlocksWater++;
+		currentMaxBlocksWater++;
 	}
 
 	private void DefaultSpawn()
@@ -293,7 +304,7 @@ public class LevelGenerator : MonoBehaviour
 
 		if (IsRandomTrue(ChanceToSpawnEnemy))
 		{
-			if (currentDistanceFromLastEnemy >= CurrentMinDistanceBetweenEnemies)
+			if (currentDistanceFromLastEnemy >= currentMinDistanceBetweenEnemies)
 			{
 				TrySpawnEnemy();
 
@@ -351,7 +362,7 @@ public class LevelGenerator : MonoBehaviour
 		{
 			if (item.Item1 == type)
 			{
-				return item.Item2;
+				return item.Item2.Clone();
 			}
 		}
 		Debug.LogError("There is no buff with type: " + type.ToString());
@@ -508,7 +519,7 @@ public class LevelGenerator : MonoBehaviour
 		SpawnGround(GroundSide.Right);
 		SpawnSmallDecor();
 
-		int rnd = Random.Range(1, maxBlocksWater+1);
+		int rnd = Random.Range(1, (int)currentMaxBlocksWater+1);
 		Sprite rndWater = CurrentTileSet.GetRandomWater();
 		for (int i = 0; i < rnd; i++)
 		{

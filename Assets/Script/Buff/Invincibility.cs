@@ -1,18 +1,22 @@
 
 
+using UnityEngine;
+
 public class Invincibility : Buff
 {
-    private int baseDuration = 5;
 
-    public Invincibility()
+    public Invincibility() 
     {
         Type = BuffType.Invincibility;
+        baseDuration = 10;
         Duration = baseDuration;
     }
 
     public override Buff Clone()
     {
-        return new Invincibility();
+        var clone = new Invincibility();
+        clone.Icon = Icon;
+        return clone;
     }
 
     public override void OnBuffEnd(PlayerController player)

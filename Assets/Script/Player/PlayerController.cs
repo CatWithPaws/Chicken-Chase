@@ -79,12 +79,28 @@ public class PlayerController : MonoBehaviour
 
     public bool hasAnyBuff => buffs.Buffs.Count > 0;
 
+    private Vector2 startPosition;
+
 	private void Awake()
 	{
         GameData.Instance.Player = this;
         touchHandler.OnTouchMove += HandleTouch;
+        startPosition = transform.position;
 	}
 
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            HandleTouch(Vector2.up);
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            HandleTouch(Vector2.down);
+        }
+    }
+#endif
 
     private void FixedUpdate()
     {
@@ -94,10 +110,19 @@ public class PlayerController : MonoBehaviour
             CheckForSlideCoolDown();
             CheckForRunState();
             CheckForResetJumps();
+            CheckForCorrectXPositioning();
         }
     }
 
-	private void CheckForResetJumps()
+    private void CheckForCorrectXPositioning()
+    {
+        if(transform.position.x != startPosition.x)
+        {
+            transform.position = Vector2.Lerp(transform.position, new Vector2(startPosition.x, transform.position.y),Time.fixedDeltaTime * 2);
+        }
+    }
+
+    private void CheckForResetJumps()
 	{
         if (groundChecker.lastIsGrounded != groundChecker.isGrounded && groundChecker.isGrounded == true)
         {
