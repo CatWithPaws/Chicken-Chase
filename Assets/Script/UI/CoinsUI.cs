@@ -7,20 +7,14 @@ public class CoinsUI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI coinsText;
 
-	private void Start()
+	private void Awake()
 	{
-		if (GameData.Instance == null)
-		{
-			coinsText.text = 0.ToString();
-		}
-		else
-		{
-			coinsText.text = GameData.Instance.CoinsCount.ToString();
-		}
+		coinsText.text = GameData.CoinsCount.ToString();
+		GameData.OnMoneyUpdate += UpdateCoins;
 	}
 
 	public void UpdateCoins()
     {
-        coinsText.text = GameData.Instance?.CoinsCount.ToString();
+        coinsText.text = GameData.CoinsCount.ToString();
     }
 }

@@ -414,7 +414,10 @@ public class LevelGenerator : MonoBehaviour
 
 		float minDistance = 0.5f;
 		float maxDistance = 1f;
-		if (rndEnemyInfo.GroundEntityType == EntityWalkType.Air && IsRandomTrue(chanceToBeInAir))
+
+        newEnemy.Animator.runtimeAnimatorController = rndEnemyInfo.Animator;
+
+        if (rndEnemyInfo.GroundEntityType == EntityWalkType.Air && IsRandomTrue(chanceToBeInAir))
 		{
 			if (IsRandomTrue(chanceToBeMovableInAir))
 			{
@@ -422,7 +425,6 @@ public class LevelGenerator : MonoBehaviour
 				verticalMovementComponent.Distance = Random.Range(minDistance, maxDistance);
 				newEnemy.Transform.position = new Vector3(newBlockPosition.x, Random.Range(newBlockPosition.y, newBlockPosition.y + verticalMovementComponent.Distance), newBlockPosition.z);
 				verticalMovementComponent.RewriteCoords();
-				newEnemy.Type = rndEnemyInfo.Type;
 				newEnemy.VerticalMovement = verticalMovementComponent;
 			}
 			else
@@ -431,7 +433,7 @@ public class LevelGenerator : MonoBehaviour
 			}
 		}
 
-		newEnemy.Animator.runtimeAnimatorController = rndEnemyInfo.Animator;
+		
 		newEnemy.Collider.isTrigger = true;
 
 
@@ -551,7 +553,6 @@ public enum EntityWalkType
 [System.Serializable]
 public class EnemyInfo
 {
-	public EnemyType Type;
 	public RuntimeAnimatorController Animator;
 	public EntityWalkType GroundEntityType;
 }

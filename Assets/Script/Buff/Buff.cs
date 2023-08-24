@@ -10,7 +10,8 @@ public abstract class Buff
     public float BaseDuration => baseDuration;
     public BuffType Type;
     public Sprite Icon;
-
+    public int Level;
+    public float additionalDurationPerLevel;
     public abstract void OnBuffStart(PlayerController player);
     public abstract void OnBuffEnd(PlayerController player);
 

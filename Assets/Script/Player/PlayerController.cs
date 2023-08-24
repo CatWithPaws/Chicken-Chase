@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
     private int modificatorOfAdditionalJumps = 0;
     private int finalAdditionalJumps => baseAdditionalJumps + modificatorOfAdditionalJumps;
 
-    private int currentAdditionalJump = 0;
+    private int currentAdditionalJump = 1;
 
     [SerializeField] private AudioClip coinPickSound;
     [SerializeField] private AudioClip firstJumpSound;
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
 	private void Awake()
 	{
-        GameData.Instance.Player = this;
+        GameData.Player = this;
         touchHandler.OnTouchMove += HandleTouch;
         startPosition = transform.position;
 	}
@@ -146,18 +146,11 @@ public class PlayerController : MonoBehaviour
 
     public void AddCoins(int count)
     {
-        if (GameData.Instance != null)
-        {
-            GameData.Instance.CoinsCount += count;
-            coinsUI.UpdateCoins();
-        }
-        else
-        {
-            print("+Coin");
-        }
+        GameData.CoinsCount += count;
+
 
         AudioManager.Instance?.PlaySFX(coinPickSound);
-	}
+    }
 
 	public void ChangeAnimationSpeed(float newSpeed)
     {
@@ -202,8 +195,9 @@ public class PlayerController : MonoBehaviour
 		IsAlive = false;
 		IsPlayingGame = false;
 		PlayerState = PlayerState.Idle;
+        buffs.RemoveAllBuffs();
 		OnPlayerDie?.Invoke();
-		GameData.Instance?.SaveCoins();
+		GameData.SaveCoins();
 	}
 
     private void CheckForSlideCoolDown()

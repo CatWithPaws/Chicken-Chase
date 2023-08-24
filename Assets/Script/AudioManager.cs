@@ -16,7 +16,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource Sounds;
 	public AudioSource SFX;
 
-    public bool SoundToogle
+    public bool SoundMuted
     {
         get
         {
@@ -24,16 +24,17 @@ public class AudioManager : MonoBehaviour
         }
         set
         {
+
             SFX.mute= value;
             Sounds.mute = value;
             soundToggle = value;
-            PlayerPrefs.SetInt(SOUND_TOGGLE_SAVE_INDEX, value ? 1 : 0);
+            PlayerPrefs.SetInt(SOUND_TOGGLE_SAVE_INDEX, (value) ? 1 : 0);
         }
     }
 
     private bool soundToggle = true;
 
-    public bool MusicToggle
+    public bool MusicMuted
     {
         get
         {
@@ -43,7 +44,7 @@ public class AudioManager : MonoBehaviour
         {
             Music.mute = value;
             musicToggle = value;
-            PlayerPrefs.SetInt(MUSIC_TOGGLE_SAVE_INDEX, value ? 1 : 0);
+            PlayerPrefs.SetInt(MUSIC_TOGGLE_SAVE_INDEX, (value) ? 1 : 0);
         }
     }
 
@@ -52,9 +53,9 @@ public class AudioManager : MonoBehaviour
 	private void Awake()
 	{
 		DontDestroyOnLoad(this.gameObject);
-        MusicToggle = PlayerPrefs.GetInt(MUSIC_TOGGLE_SAVE_INDEX) == 1 ?  true : false;
+        MusicMuted = PlayerPrefs.GetInt(MUSIC_TOGGLE_SAVE_INDEX) == 1 ?  true : false;
 
-		SoundToogle = PlayerPrefs.GetInt(SOUND_TOGGLE_SAVE_INDEX) == 1 ? true : false;
+		SoundMuted = PlayerPrefs.GetInt(SOUND_TOGGLE_SAVE_INDEX) == 1 ? true : false;
 		Instance = this;
 	}
 

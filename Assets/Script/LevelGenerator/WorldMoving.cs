@@ -22,7 +22,7 @@ public class WorldMoving : MonoBehaviour
 	private float growingSpeedMultiplierPerSecond = 0.01f;
 
 
-	private void FixedUpdate()
+    private void FixedUpdate()
 	{
 		if (!player.IsPlayingGame) { return; }
 		var children = transform.GetComponentsInChildren<Transform>();
@@ -41,4 +41,6 @@ public class WorldMoving : MonoBehaviour
 
 		PassedDistance += distanceToAdd;
 	}
+
+
 }

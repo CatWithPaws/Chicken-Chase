@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Delegates : MonoBehaviour
+namespace Delegates
 {
     public delegate void VoidFunc();
 }

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0bc0e937fa7a040ba6ec1c901b7f7c, type: 3}
+  m_Name: GiantChickenSkins
+  m_EditorClassIdentifier: 
+  skins:
+  - ID: 0
+    Name: Default
+    SkinPreview: {fileID: -300335194, guid: ca444d01e38885f40906cb8e97cb00f8, type: 3}
+    AnimatorController: {fileID: 9100000, guid: d87628106cde8d64b90dd6734d4903ef, type: 2}
+    price: 0
+  - ID: 1
+    Name: Neon
+    SkinPreview: {fileID: 61252914, guid: 19b95e0849d8a9a418aba5798df512dd, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 18befc2b0f8db5b40a3382824327de58, type: 2}
+    price: 1500
+  - ID: 2
+    Name: Ice
+    SkinPreview: {fileID: 1104645426, guid: 5ac79fd5617a48c47b5b9cdb57090954, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 87d6a4cd9502f364d8aa333c53d541c5, type: 2}
+    price: 6000

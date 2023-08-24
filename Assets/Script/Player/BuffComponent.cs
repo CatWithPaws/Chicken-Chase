@@ -8,7 +8,7 @@ public class BuffComponent : MonoBehaviour
 {
     public List<Buff> Buffs = new List<Buff>();
 
-    private PlayerController player => GameData.Instance.Player;
+    private PlayerController player => GameData.Player;
 
     private Timer timer;
 
@@ -52,6 +52,11 @@ public class BuffComponent : MonoBehaviour
             DebugBuffInfo.text += "BuffType: " + buff.Type + "\n";
             DebugBuffInfo.text += "Duration: " + buff.Duration + "\n\n";
         }
+    }
+
+    public void RemoveAllBuffs()
+    {
+        Buffs.Clear();
     }
 
     public void AddBuff(Buff buff)

@@ -10,13 +10,23 @@ public class ToggleSound : MonoBehaviour
 	[SerializeField] private Sprite enabledBtn;
 	[SerializeField] private Sprite disabledBtn;
 
-	public void ToggleBtn()
+    private void OnEnable()
+    {
+		UpdateSprite();
+    }
+
+    public void ToggleBtn()
 	{
 		if (AudioManager.Instance != null)
 		{
-			bool toggle = AudioManager.Instance.SoundToogle;
-			AudioManager.Instance.SoundToogle = !toggle;
-			btnImage.sprite = toggle ? enabledBtn : disabledBtn;
-		}
+			bool newMuted = !AudioManager.Instance.SoundMuted;
+			AudioManager.Instance.SoundMuted = newMuted;
+            UpdateSprite();
+        }
 	}
+
+	private void UpdateSprite()
+	{
+        btnImage.sprite = AudioManager.Instance.SoundMuted ? disabledBtn : enabledBtn;
+    }
 }

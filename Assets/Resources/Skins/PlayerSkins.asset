@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5d26fd70e921ed41aea4c62c7bfbf91, type: 3}
+  m_Name: PlayerSkins
+  m_EditorClassIdentifier: 
+  skins:
+  - ID: 0
+    Name: Default
+    SkinPreview: {fileID: 244203156, guid: d21b65a7ebd56964fa21599e1f4a6a1b, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 57a778e4af0d49c43870378170ccc3df, type: 2}
+    price: 0
+  - ID: 1
+    Name: Green
+    SkinPreview: {fileID: 547738637, guid: 3b20ae685ed6d8544bb877e7c3386837, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 6c6da9b83a02b8e42bd36d72ee717b16, type: 2}
+    price: 1500
+  - ID: 2
+    Name: Smoke
+    SkinPreview: {fileID: -1782725197, guid: b65d65b2ae73c7d4aa2640c315e6b3eb, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 5d377c1f8fc896d4ba5750ef4dd91643, type: 2}
+    price: 6000
+  - ID: 3
+    Name: Zombie
+    SkinPreview: {fileID: -204585346, guid: 2d704b9f4e7332847a850ad4dfae3f4f, type: 3}
+    AnimatorController: {fileID: 9100000, guid: 5d377c1f8fc896d4ba5750ef4dd91643, type: 2}
+    price: 12000
