@@ -10,29 +10,21 @@ public class BuffComponent : MonoBehaviour
 
     private PlayerController player => GameData.Player;
 
-    private Timer timer;
 
-    private int TimerTickPeriod = 100;
 
     [SerializeField] private TextMeshProUGUI DebugBuffInfo;
 
-    private void Awake()
-    {
-        StartTimer();
-    }
+    public delegate void OnBuff(BuffType buff);
 
-    private void StartTimer()
-    {
-        timer = new Timer(TimerTickPeriod);
-        //timer.Elapsed += OnSecondPassed;
-        timer.AutoReset = true;
-        //timer.Start();
-    }
+    public static OnBuff OnAddNewBuff;
+    public static OnBuff OnRemoveBuff;
+
 
     private void OnDestroy()
     {
-        timer.Dispose();
-        Buffs.Clear();
+        RemoveAllBuffs();
+        OnAddNewBuff = null;
+        OnRemoveBuff = null;
     }
 
     private void Update()
@@ -48,15 +40,15 @@ public class BuffComponent : MonoBehaviour
                 RemoveBuff(buff);
                 continue;
             }
-
-            DebugBuffInfo.text += "BuffType: " + buff.Type + "\n";
-            DebugBuffInfo.text += "Duration: " + buff.Duration + "\n\n";
         }
     }
 
     public void RemoveAllBuffs()
     {
-        Buffs.Clear();
+        foreach(Buff buff in Buffs.ToArray())
+        {
+            RemoveBuff(buff);
+        }
     }
 
     public void AddBuff(Buff buff)
@@ -74,12 +66,13 @@ public class BuffComponent : MonoBehaviour
             print("Buff Added " + buff.Type);
         }
 
-
+        OnAddNewBuff(buff.Type);
     }
 
     private void RemoveBuff(Buff buff)
     {
         Buffs.Remove(buff);
+        OnRemoveBuff(buff.Type);
         print("Buff removed " + buff.Type);
     }
 }

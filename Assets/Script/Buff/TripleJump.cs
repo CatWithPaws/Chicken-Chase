@@ -4,30 +4,30 @@ using UnityEngine;
 public class TripleJump : Buff
 {
     protected int additionalJumps = 1; // Double jump + 1 additional
-    
 
-    public TripleJump()
+
+    public TripleJump(Sprite icon) : base(BuffType.TripleJump, icon)
     {
-        Type = BuffType.TripleJump;
-        baseDuration = 10;
-        Duration = baseDuration;
+        OnBuffStart = BuffStart; 
+        OnBuffEnd = BuffEnd;
+
+        Level = GameData.GetBuffLevel(Type);
+
+        Duration = BaseDuration;
     }
 
-    public override Buff Clone()
-    {
-        var clone = new TripleJump();
-        clone.Icon = Icon;
-        return clone;
-    }
-
-    public override void OnBuffEnd(PlayerController player)
+    public  void BuffEnd(PlayerController player)
     {
         player.SubstractAdditionalJumps(additionalJumps);
     }
 
-    public override void OnBuffStart(PlayerController player)
+    public  void BuffStart(PlayerController player)
     {
         player.AddAdditionalJumps(additionalJumps);
     }
 
+    public override Buff Clone()
+    {
+        return new TripleJump(Icon);
+    }
 }

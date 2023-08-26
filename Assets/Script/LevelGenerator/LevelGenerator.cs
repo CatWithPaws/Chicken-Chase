@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 enum GroundSide
@@ -44,7 +45,7 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField]
 	private Transform startPoint;
     
-	private Block lastBlock;
+	private BlockBase lastBlock;
 
 	private TileSet CurrentTileSet;
 
@@ -72,9 +73,9 @@ public class LevelGenerator : MonoBehaviour
 	private int currentBlocksOfSameBiome = 0;
 
 	private float currentMaxBlocksWater = 2;
-	private int capOfMaxBlocksWater = 10;
+	private float capOfMaxBlocksWater = 10;
 
-	private int BlocksToNotPlaceAnythingInStart = 30;
+	private int BlocksToNotPlaceAnythingInStart = 70;
 
 	[SerializeField] private SpriteRenderer BackGround;
 
@@ -101,29 +102,49 @@ public class LevelGenerator : MonoBehaviour
 
 	private PoolObject<BuffBlock> buffPool = new PoolObject<BuffBlock>();
 
+
+	[SerializeField] private WaterBlock[] waterBlocks;
+	private PoolObject<WaterBlock> waterPool = new PoolObject<WaterBlock>();
+
 	[SerializeField] private List<BuffBlock> buffs;
 	[SerializeField] private Sprite magnetSprite;
 	[SerializeField] private Sprite bridgeSprite;
 	[SerializeField] private Sprite tripleJumpSprite;
 	[SerializeField] private Sprite invincibilitySprite;
 
-	[SerializeField] private Dictionary<BuffType, Sprite> spritesByBuffTypeList = new Dictionary<BuffType, Sprite>();
 
-	float distanceToIncreaseRiverByOneBlock = 200;
-	float distanceToIncreaseDistanceBetweenEnemies = 200;
+	float distanceToIncreaseRiverByOneBlock = 400;
+	float distanceToIncreaseDistanceBetweenEnemies = 400;
 
-	private (BuffType, Buff)[] buffsInstances = new (BuffType, Buff)[]
+	private Dictionary<BuffType,Buff> buffsInstances = new Dictionary<BuffType, Buff>();
+
+
+	private void Awake() 
 	{
-		(BuffType.TripleJump,new TripleJump()),
-		(BuffType.Invincibility, new Invincibility())
-	};
-	private void Awake()
-    {
-        spritesByBuffTypeList.Add(BuffType.TripleJump, tripleJumpSprite);
-        spritesByBuffTypeList.Add(BuffType.Invincibility, invincibilitySprite);
+        buffsInstances.Add(BuffType.TripleJump, new TripleJump(tripleJumpSprite));
+		buffsInstances.Add(BuffType.Bridge,new Bridge(bridgeSprite));
+		buffsInstances.Add(BuffType.Invincibility,new Invincibility(invincibilitySprite));
 
-        buffsInstances[0].Item2.Icon = tripleJumpSprite;
-        buffsInstances[1].Item2.Icon = invincibilitySprite;
+		BuffComponent.OnAddNewBuff += OnAddNewBuff;
+		BuffComponent.OnRemoveBuff += OnRemoveBuff;
+    }
+
+	private void OnAddNewBuff(BuffType type)
+	{
+		if (type != BuffType.Bridge) return; 
+		foreach(var water in waterBlocks)
+		{
+			water.OnBridgePowerUpActive();
+		}
+	}
+
+	private void OnRemoveBuff(BuffType type)
+	{
+		if(type != BuffType.Bridge) return;
+        foreach (var water in waterBlocks)
+        {
+            water.OnBridgePowerUpDisable();
+        }
     }
 
     public void Start()
@@ -143,7 +164,7 @@ public class LevelGenerator : MonoBehaviour
     private void CreateFirstGroundBlock()
     {
         var newBlock = blocksPool.PickAvailableItem();
-        newBlock.gameObject.transform.parent = world.transform;
+        world.AddToWorld(newBlock);
         newBlock.gameObject.transform.position = startPoint.position;
         newBlock.Sprite.sprite = CurrentTileSet.GetRandomGround();
         lastBlock = newBlock;
@@ -194,14 +215,17 @@ public class LevelGenerator : MonoBehaviour
         {
             buffPool.AddItem(buff);
         }
+
+		foreach(var water in waterBlocks)
+		{
+			waterPool.AddItem(water);
+		}
     }
 
 
     private void OnBlockBecameInvisible(BlockBase block)
 	{
-		block.Transform.parent = null;
-		block.Sprite.sprite = null;
-		block.Transform.position = OutOfScreenPosition.position;
+		world.RemoveFromWorld(block);
 		block.gameObject.layer = otherLayer;
 
 		switch (block)
@@ -222,6 +246,9 @@ public class LevelGenerator : MonoBehaviour
                 break;
 			case BuffBlock:
 				buffPool.AddItem((BuffBlock)block);
+				break;
+			case WaterBlock:
+				waterPool.AddItem((WaterBlock)block);
 				break;
         }
 	}
@@ -268,6 +295,7 @@ public class LevelGenerator : MonoBehaviour
 
 
 		currentMaxBlocksWater = Mathf.Clamp(currentMaxBlocksWater + (1 / distanceToIncreaseRiverByOneBlock), 0, capOfMaxBlocksWater);
+	
 		currentMinDistanceBetweenEnemies = Mathf.Clamp(currentMinDistanceBetweenEnemies + (1 / distanceToIncreaseDistanceBetweenEnemies), 0, capOfMaxDistanceBetweenEnemies);
 
 
@@ -351,22 +379,22 @@ public class LevelGenerator : MonoBehaviour
 		BuffBlock buff = (BuffBlock)SpawnObjectInTheWorld(buffPool);
 		buff.Transform.Translate(Vector2.up*2);
 		BuffType rndType = (BuffType)Random.Range(0, (int)BuffType.Count);
-		buff.Sprite.sprite = spritesByBuffTypeList[rndType];
-		buff.Buff = GetBuffByType(rndType);
-		
-	}
+		buff.Buff = GetBuffByType(rndType).Clone();
+        buff.Sprite.sprite = buff.Buff.Icon;
+
+    }
 
 	private Buff GetBuffByType(BuffType type)
 	{
-		foreach(var item in buffsInstances)
+		try
 		{
-			if (item.Item1 == type)
-			{
-				return item.Item2.Clone();
-			}
+			return buffsInstances[type];
 		}
-		Debug.LogError("There is no buff with type: " + type.ToString());
-		return default;
+		catch
+		{
+			Debug.LogError("BuffNotFound");
+			return null;
+		}
 	}
 
 	private void TrySpawnDecor()
@@ -404,10 +432,7 @@ public class LevelGenerator : MonoBehaviour
 
 		var rndEnemyInfo = EnemiesInfo[Random.Range(0, EnemiesInfo.Length)];
 
-		var newEnemy = enemiesPool.PickAvailableItem();
-		newEnemy.Transform.position = newBlockPosition;
-		newEnemy.Transform.parent = null;
-		newEnemy.Transform.parent = world.transform;
+		EnemyBlock newEnemy = SpawnObjectInTheWorld(enemiesPool,newBlockPosition);
 
 		float chanceToBeInAir = 0.5f;
 		float chanceToBeMovableInAir = 0.5f;
@@ -456,13 +481,12 @@ public class LevelGenerator : MonoBehaviour
 		}
 	}
 
-	private BlockBase SpawnObjectInTheWorld<T>(PoolObject<T> pool) where T : BlockBase
+	private T SpawnObjectInTheWorld<T>(PoolObject<T> pool, Vector3 position = default) where T : BlockBase
 	{
-		Vector3 newBlockPosition = lastBlock.Transform.position;
+		position = position == default ? lastBlock.transform.position : position;
 		var newBlock = pool.PickAvailableItem();
-		newBlock.Transform.position = newBlockPosition;
-		newBlock.Transform.parent = null;
-		newBlock.Transform.parent = world.transform;
+        world.AddToWorld(newBlock);
+        newBlock.Transform.position = position;
 		return newBlock;
 	}
 
@@ -488,6 +512,7 @@ public class LevelGenerator : MonoBehaviour
 		SetBlockSprite[(int)side](newBlock);
 		int layer = (Utility.LayerMaskToLayer(groundLayer));
 		newBlock.gameObject.layer = layer;
+
 		lastBlock = newBlock;
 	}
 
@@ -526,13 +551,10 @@ public class LevelGenerator : MonoBehaviour
 		for (int i = 0; i < rnd; i++)
 		{
 			Vector3 newBlockPosition = lastBlock.Transform.position + Vector3.right;
-			var newBlock = blocksPool.PickAvailableItem();
-			newBlock.Transform.position = newBlockPosition;
-			newBlock.Transform.parent = null;
-			newBlock.Transform.parent = world.transform;
+			var newBlock = SpawnObjectInTheWorld<WaterBlock>(waterPool,newBlockPosition);
 			newBlock.Sprite.sprite = rndWater;
-			newBlock.Collider.isTrigger = true;
 			newBlock.gameObject.layer = LayerMask.NameToLayer("Water");
+			
 			lastBlock = newBlock;
 		}
 		SpawnGround(GroundSide.Left);

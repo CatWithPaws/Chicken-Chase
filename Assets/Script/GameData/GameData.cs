@@ -129,4 +129,28 @@ public class GameData
 	{
 		Save.saveFile.BestDistance = distance;
 	}
+
+	public static BuffSaveBody GetBuffs()
+	{
+		return Save.saveFile.PlayerData.Buffs;
+	}
+
+	public static void SetBuffLevel(BuffType type, int level)
+	{
+		if (level <= 10)
+		{
+			Save.saveFile.PlayerData.Buffs.buffLevels[type] = level;
+		}
+		else
+		{
+			Debug.LogError("Trying to set level more than max");
+		}
+	}
+
+	public static int GetBuffLevel(BuffType type)
+	{
+
+		return Save.saveFile.PlayerData.Buffs.buffLevels[type];
+
+    }
 }

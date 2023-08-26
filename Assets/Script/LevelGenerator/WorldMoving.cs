@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class WorldMoving : MonoBehaviour
 {
+
 	[SerializeField] private PlayerController player;
 
 	public float Speed
@@ -16,19 +17,23 @@ public class WorldMoving : MonoBehaviour
 		}
 	}
 
-	[SerializeField] private float speed = 1.5f;
+	[SerializeField] private float speed = 5f;
+
+	[SerializeField] private Transform usedBlocksTransform;
 
 	public float PassedDistance { get; private set; }
-	private float growingSpeedMultiplierPerSecond = 0.01f;
+	private float growingSpeedMultiplierPerSecond = 0.03f;
 
+	private readonly List<BlockBase> blocks = new List<BlockBase>();
 
     private void FixedUpdate()
 	{
 		if (!player.IsPlayingGame) { return; }
-		var children = transform.GetComponentsInChildren<Transform>();
-		foreach(var obj in children)
+		
+
+		foreach(var obj in blocks)
 		{
-			obj.transform.Translate(Vector3.left*Time.fixedDeltaTime * speed);
+			obj.Transform.Translate(Vector3.left*Time.fixedDeltaTime * speed);
 		}
 		if (speed < 15)
 		{
@@ -42,5 +47,17 @@ public class WorldMoving : MonoBehaviour
 		PassedDistance += distanceToAdd;
 	}
 
+	public void AddToWorld(BlockBase block)
+	{
+		block.Transform.parent = this.transform;
+		blocks.Add(block);
+	}
+
+	public void RemoveFromWorld(BlockBase block)
+	{
+		block.transform.parent = usedBlocksTransform;
+		block.transform.localPosition = Vector3.zero;
+        blocks.Remove(block);
+	}
 
 }

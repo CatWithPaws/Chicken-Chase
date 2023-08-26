@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -81,6 +82,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 startPosition;
 
+
+
+
 	private void Awake()
 	{
         GameData.Player = this;
@@ -121,6 +125,7 @@ public class PlayerController : MonoBehaviour
             transform.position = Vector2.Lerp(transform.position, new Vector2(startPosition.x, transform.position.y),Time.fixedDeltaTime * 2);
         }
     }
+
 
     private void CheckForResetJumps()
 	{
@@ -322,6 +327,11 @@ public class PlayerController : MonoBehaviour
     public void SubstractAdditionalJumps(int value)
     {
         modificatorOfAdditionalJumps -= value;
+    }
+    
+    public bool HasBuff(BuffType type)
+    {
+        return buffs.Buffs.FirstOrDefault((x) => x.Type == type) != default;
     }
 
 }

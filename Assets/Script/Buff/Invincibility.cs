@@ -5,27 +5,28 @@ using UnityEngine;
 public class Invincibility : Buff
 {
 
-    public Invincibility() 
+    public Invincibility(Sprite icon) : base(BuffType.Invincibility,icon)
     {
-        Type = BuffType.Invincibility;
-        baseDuration = 10;
-        Duration = baseDuration;
+        OnBuffStart = BuffStart;
+        OnBuffEnd = BuffEnd;
+        Level = GameData.GetBuffLevel(Type);
+        Duration = BaseDuration;
     }
 
     public override Buff Clone()
     {
-        var clone = new Invincibility();
-        clone.Icon = Icon;
-        return clone;
+        return new Invincibility(Icon);
     }
 
-    public override void OnBuffEnd(PlayerController player)
+    private void BuffEnd(PlayerController player)
     {
         player.IsInvincible = false;
     }
 
-    public override void OnBuffStart(PlayerController player)
+    private void BuffStart(PlayerController player)
     {
         player.IsInvincible = true;
     }
+
+    
 }
