@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class UpgradeCell : MonoBehaviour
 {
+    public UpgradeShop upgradeShop;
+
     [SerializeField] private TextMeshProUGUI BuffNameText;
     [SerializeField] private TextMeshProUGUI LevelText;
     [SerializeField] private Image BuffIcon;
@@ -13,9 +15,12 @@ public class UpgradeCell : MonoBehaviour
 
     [SerializeField] private GameObject BuyObject;
     [SerializeField] private GameObject MaxLVLObject;
-    
+
+    [SerializeField] private GameObject[] UpgradeLevelIndicators;
+
     private BuffType BuffType;
     private int buffLevel = 1;
+    private int price = 0;
 
     private static Dictionary<BuffType, string> buffNames = new Dictionary<BuffType, string>() {
         { BuffType.TripleJump,"Triple Jump" },
@@ -34,7 +39,8 @@ public class UpgradeCell : MonoBehaviour
         if(buffLevel < maxBuffLevel)
         {
             LevelText.text = "Lvl " + buffLevel.ToString() + "/ 10";
-            Price.text = (200 * (2 * buffLevel)).ToString();
+            price = (400 * buffLevel);
+            Price.text = price.ToString();
             BuyObject.SetActive(true);
             MaxLVLObject.SetActive(false);
         }
@@ -44,13 +50,25 @@ public class UpgradeCell : MonoBehaviour
             BuyObject.SetActive(false);
         }
         
+        foreach(var indicator in  UpgradeLevelIndicators)
+        {
+            indicator.SetActive(false);
+        }
+        for(int i = 0; i < buffLevel; i++)
+        {
+            UpgradeLevelIndicators[i].SetActive(true);
+        }
         BuffIcon.sprite = icon;
-        
+        gameObject.SetActive(true);
     }
 
 
     public void BuyUpgrade()
     {
-        GameData.SetBuffLevel(BuffType, buffLevel + 1);
+        if (GameData.SpendMoney(price))
+        {
+            GameData.SetBuffLevel(BuffType, buffLevel + 1);
+            upgradeShop.OnUpgradeBuy();
+        }
     }
 }

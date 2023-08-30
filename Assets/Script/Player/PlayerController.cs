@@ -84,7 +84,6 @@ public class PlayerController : MonoBehaviour
 
 
 
-
 	private void Awake()
 	{
         GameData.Player = this;
@@ -151,7 +150,7 @@ public class PlayerController : MonoBehaviour
 
     public void AddCoins(int count)
     {
-        GameData.CoinsCount += count;
+        GameData.EarnMoney(count);
 
 
         AudioManager.Instance?.PlaySFX(coinPickSound);
@@ -170,11 +169,26 @@ public class PlayerController : MonoBehaviour
 		}
     }
 
+    public void ResetPosition()
+    {
+        transform.position = startPosition;
+    }
+
     public void StartPlayer()
     {
 		PlayerState = PlayerState.Run;
 		IsPlayingGame = true;
         
+    }
+
+    public void DisablePhysics()
+    {
+        physics.rb.isKinematic = true;
+    }
+
+    public void EnablePhysics()
+    {
+        physics.rb.isKinematic = false;
     }
 
     public void DieFromDrowning()
@@ -333,7 +347,11 @@ public class PlayerController : MonoBehaviour
     {
         return buffs.Buffs.FirstOrDefault((x) => x.Type == type) != default;
     }
-
+    
+    public void ChangeAnimationTo(PlayerState state)
+    {
+        animations.SwitchAnimationTo(state);
+    }
 }
 
 public enum PlayerState

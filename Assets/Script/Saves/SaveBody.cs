@@ -6,7 +6,7 @@ public class SaveBody
 {
     public PlayerSaveBody PlayerData { get; private set; }
 
-    public bool IsFirstLauch { get; private set; }
+    public bool IsFirstLauch { get;  set; }
 
     public int ChickenSkinID { get; set; }
     public int PlayerSkinID { get; set; }

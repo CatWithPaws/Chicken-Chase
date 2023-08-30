@@ -14,7 +14,7 @@ public class GameData
 
 
 	private static int coinsCount;
-	public static int CoinsCount
+	private static int CoinsCount
 	{
 		get
 		{
@@ -59,6 +59,26 @@ public class GameData
 	{
 		Save.saveFile.PlayerData.Money = CoinsCount;
 		SaveGame();
+	}
+
+	public static int GetCoinsCount()
+	{
+		return CoinsCount;
+	}
+
+	public static bool SpendMoney(int amount)
+	{
+		if(CoinsCount >= amount)
+		{
+			CoinsCount -= amount;
+			return true;
+		}
+		return false;
+	}
+
+	public static void EarnMoney(int amount)
+	{
+		CoinsCount += amount;
 	}
 
 	public static void SetChickenSkin(int id)

@@ -9,12 +9,12 @@ public class CoinsUI : MonoBehaviour
 
 	private void Awake()
 	{
-		coinsText.text = GameData.CoinsCount.ToString();
+		coinsText.text = GameData.GetCoinsCount().ToString();
 		GameData.OnMoneyUpdate += UpdateCoins;
 	}
 
 	public void UpdateCoins()
     {
-        coinsText.text = GameData.CoinsCount.ToString();
+        coinsText.text = GameData.GetCoinsCount().ToString();
     }
 }

@@ -115,9 +115,8 @@ public class SkinShopCell : MonoBehaviour
 
     private void BuySkin()
     {
-        if (GameData.CoinsCount >= price)
+        if (GameData.SpendMoney(price))
         {
-            GameData.CoinsCount -= price;
             UnlockSkin[(int)whoseSkin](skinID);
         }
     }

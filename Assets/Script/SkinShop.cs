@@ -9,7 +9,6 @@ public class SkinShop : MonoBehaviour
     [SerializeField] SkinShopCell[] cells;
 
     [SerializeField] GameObject wrapper;
-    [SerializeField] GameObject startGameUI;
 
     public SkinShopCell equipedCell;
 
@@ -28,11 +27,6 @@ public class SkinShop : MonoBehaviour
     private void Awake()
     {
         OnShopUpdate += UpdateShop;
-    }
-
-    private void OnEnable()
-    {
-        ChangeToPlayerShop();
     }
 
     public void ChangeToPlayerShop()
@@ -67,17 +61,5 @@ public class SkinShop : MonoBehaviour
             cell.ShowSkin(i,whoseSkinShop);
             cells[i].gameObject.SetActive(true);
         }
-    }
-
-    public void EnablePanel()
-    {
-        wrapper.gameObject.SetActive(true);
-        startGameUI.gameObject.SetActive(false);
-    }
-
-    public void DisablePanel()
-    {
-        wrapper.gameObject.SetActive(false);
-        startGameUI.gameObject.SetActive(true);
     }
 }

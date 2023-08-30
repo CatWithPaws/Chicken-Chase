@@ -9,7 +9,14 @@ public class InitGame : MonoBehaviour
     void Start()
     {
         GameData.Load();
-
-        SceneManager.LoadScene(1);
+        if (Save.saveFile.IsFirstLauch)
+        {
+            SceneManager.LoadScene(2);
+        }
+        else
+        {
+            SceneManager.LoadScene(1);
+        }
+       
     }
 }
